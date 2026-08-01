@@ -1,0 +1,253 @@
+from __future__ import annotations
+from enum import StrEnum
+import json
+import math
+import re
+from collections.abc import Iterator
+from pathlib import Path
+from typing import Final
+
+from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
+
+from pydantic import (
+    BaseModel, ConfigDict, Field, computed_field, field_validator
+)
+
+from pydantic_settings import (
+    BaseSettings, SettingsConfigDict
+)
+
+
+BACKEND_DIR: Final[Path] = Path(__file__).resolve().parents[1]
+
+
+
+skip_sections : Final[frozenset[str]] = frozenset(
+    {"sources", "chapter in a nutshell"}
+)
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=BACKEND_DIR / ".env", extra="ignore"
+    )
+
+    book_source_path : Path
+    chunks_out: Path = Path("data/chunks.jsonl")
+    target_words: int = Field(default=350, gt=0)
+    min_words: int = Field(default=60, gt=0)
+    merge_floor: int = Field(default=150, gt=0)
+
+    @field_validator("book_source_path", "chunks_out", mode="after")
+    @classmethod
+    def _anchor(cls, v: Path) -> Path:
+        return v if v.is_absolute() else (BACKEND_DIR / v).resolve()
+
+
+    @field_validator("book_source_path", mode="after")
+    @classmethod
+    def _must_exist(cls, v: Path) -> Path:
+        if not v.is_dir():
+            raise ValueError(f"BOOK_SOURCE_PATH is not a directory: {v}")
+        return v
+
+
+# Bibliographies read as junk when cited as prose.
+DROP_SECTIONS: Final[frozenset[str]] = frozenset({"sources"})
+
+# Never an answer to any question about the book's ideas.
+DROP_FILES: Final[frozenset[str]] = frozenset({
+    "00a-title-page.md",
+    "00b-copyright.md",
+    "00c2-acknowledgments.md",   # names real people
+    "17-about-the-author.md",
+})
+
+class ChunkKind(StrEnum):
+    PROSE = "prose"
+    RECAP = "recap"        # "... in a nutshell"
+    TOC = "toc"
+    GLOSSARY = "glossary"
+
+
+class Chunk(BaseModel):
+    """ one retrievable unit of the book """
+    model_config = ConfigDict(frozen=True)
+
+    id: int
+    source_file: str
+    chapter: str = Field(min_length=1)
+    section: str = Field(min_length=1)
+    content: str = Field(min_length=1)
+    kind: ChunkKind = ChunkKind.PROSE
+
+    @computed_field
+    @property
+    def embed_text(self) -> str:
+        return (
+            f"From '{self.chapter}', section '{self.section}':\n\n {self.content}"
+        )
+
+    @computed_field
+    @property
+    def word_count(self) -> int:
+        return len(self.content.split())
+
+
+# now using the chunking strategy from langchain splitter. We could use normal regex but its not worth the hassle
+
+def make_header_splitter() -> MarkdownHeaderTextSplitter:
+    return MarkdownHeaderTextSplitter(
+        headers_to_split_on=[
+            ("#", "chapter"),
+            ("##", "section"),
+            ("###", "subsection")
+        ],
+        strip_headers=True
+    )
+
+
+def split_section(doc: Document, s: Settings) -> list[Document]:
+
+    """Even pieces, so there's no runt at the end."""
+    words = len(doc.page_content.split())
+    if words <= s.target_words * 1.15:
+        return [doc]                       # close enough — leave it whole
+    n = math.ceil(words / s.target_words)
+    size = math.ceil(words / n)            # 400 words -> 2 x 200
+    
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=size,
+        chunk_overlap=0,
+        length_function= lambda t: len(t.split()),
+        separators=["\n\n", "\n", ". ", " ", ""]
+    )
+
+    return splitter.split_documents([doc])
+
+
+
+
+_IMAGE = re.compile(r"!\[[^\]]*\]\([^)]*\)")
+_LINK = re.compile(r"\[([^\]]+)\]\([^)]*\)")
+
+def strip_images(text: str) -> str:
+    """![alt](path) — no visual content reaches the index."""
+    return _IMAGE.sub("", text)
+
+def unwrap_links(text: str) -> str:
+    """[label](url) -> label. URLs cost tokens, carry no meaning."""
+    return _LINK.sub(r"\1", text)
+
+def unescape_dollors(text: str) -> str:
+    r"""The manuscript writes \$115; readers should see $115."""
+    return text.replace("\\$", "$")
+
+def clean(text: str) -> str:
+    """Light touch — markdown structure is signal, not noise."""
+    for step in (strip_images, unwrap_links, unescape_dollors):
+        text = step(text)
+
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+
+## skipping biblographies
+def is_dropped(doc: Document) -> bool:
+    return any(
+        str(doc.metadata.get(k, "")).lower().strip() in DROP_SECTIONS
+        for k in ("section", "subsection")
+    )
+
+def classify(doc: Document) -> ChunkKind:
+    m = doc.metadata
+    name = str(m.get("subsection") or m.get("section") or "").lower().strip()
+    file = str(m.get("source_file", ""))
+
+    if name.endswith("in a nutshell"):    # <- suffix, not exact match
+        return ChunkKind.RECAP
+    if file.startswith("00c-contents"):
+        return ChunkKind.TOC
+    if file.startswith("15-glossary"):
+        return ChunkKind.GLOSSARY
+    return ChunkKind.PROSE
+
+
+def merge_orphan_tails(chunks: list[Chunk], floor: int) -> list[Chunk]:
+    """A short trailing chunk in the same section is a fragment,
+    not an idea. Fold it back into its predecessor."""
+    out: list[Chunk] = []
+    for chunk in chunks:
+        prev = out[-1] if out else None
+        same_section = prev is not None and (
+            (prev.chapter, prev.section) == (chunk.chapter, chunk.section)
+        )
+
+        if(same_section and chunk.word_count < floor):
+            out[-1] = prev.model_copy(update={
+                "content": prev.content + "\n\n" + chunk.content
+            })
+            continue
+        out.append(chunk)
+
+    # ids must stay contiguous after merging
+    return [c.model_copy(update={"id": i}) for i, c in enumerate(out)]
+        
+
+def iter_chunks(s: Settings) -> Iterator[Chunk]:
+    header = make_header_splitter()
+    next_id = 0
+
+    # Explicit allowlist. The book repo holds four copies of the
+    # manuscript, and this folder holds 22 .md files, not 13.
+    manuscript: list[Path] = sorted(s.book_source_path.glob("*.md"))
+
+    for path in manuscript:
+        if(path.name in DROP_FILES):
+            continue
+        sections: list[Document] = header.split_text(path.read_text(encoding="utf-8"))
+
+        for doc in sections:
+            doc.metadata["source_file"] = path.name
+
+        for doc in sections:
+            if(is_dropped(doc)):
+                continue
+
+            for piece in split_section(doc, s):
+                content = clean(piece.page_content)
+                if(len(content.split()) < s.min_words):
+                    continue
+
+                meta = piece.metadata
+
+                yield Chunk(
+                    id = next_id,
+                    source_file=str(meta["source_file"]),
+                    chapter= str(meta.get("chapter", "Unknown chapter")),
+                    section= str(meta.get("subsection") or meta.get("section") or "Opening"),
+                    kind=classify(piece),
+                    content= content
+                )
+                next_id += 1
+
+
+def main() -> None:
+    settings = Settings()
+    chunks: list[Chunk] = merge_orphan_tails(
+        list(iter_chunks(settings)), settings.merge_floor
+    )
+
+    settings.chunks_out.parent.mkdir(
+        parents=True, exist_ok=True
+    )
+
+    with settings.chunks_out.open("w", encoding="utf-8") as f:
+        for chunk in chunks:
+            f.write(chunk.model_dump_json() + "\n")
+
+    print(f"{len(chunks)} chunks -> {settings.chunks_out}")
+
+
+
+if __name__ == "__main__":
+    main()

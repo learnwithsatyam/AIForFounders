@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>book_chunking.py — the changes it needs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f7f7f5; --surface:#fff; --surface-2:#efefec; --border:#e3e2de;
+    --text:#1f1f1e; --text-2:#6e6e69; --text-3:#9c9c96;
+    --accent:#3d5af1; --accent-soft:#eceffe; --accent-2:#b5179e;
+    --green:#0f7b52; --green-soft:#e8f5ef; --amber:#8a6100; --amber-soft:#fdf3e0;
+    --red:#b3261e; --red-soft:#fdeeee;
+    --code-bg:#16161a; --code-fg:#e6e6ef;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.6;
+  }
+  .wrap{max-width:1340px; margin:0 auto; padding:48px 26px 96px}
+  header{margin-bottom:34px}
+  .eyebrow{
+    font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin-bottom:10px;
+  }
+  h1{
+    font-family:'Fraunces',serif; font-weight:600; font-size:clamp(1.9rem,4vw,2.9rem);
+    line-height:1.1; margin:0 0 12px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    -webkit-background-clip:text; background-clip:text; color:transparent; width:fit-content;
+  }
+  .lede{font-size:1.03rem; color:var(--text-2); max-width:74ch; margin:0}
+  h2{
+    font-family:'Fraunces',serif; font-weight:600; font-size:1.5rem;
+    margin:56px 0 6px; padding-top:22px; border-top:1px solid var(--border);
+  }
+  h2.first{border-top:none; padding-top:0}
+  .sub{color:var(--text-2); margin:0 0 22px; max-width:76ch; font-size:.95rem}
+
+  .summary{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:12px; margin:24px 0 8px;
+  }
+  .stat{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:14px 16px;
+  }
+  .stat .n{font-family:'Fraunces',serif; font-size:1.6rem; font-weight:700; line-height:1}
+  .stat .l{font-size:.78rem; color:var(--text-2); margin-top:5px}
+  .stat.good .n{color:var(--green)}
+  .stat.warn .n{color:var(--amber)}
+
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:stretch}
+  .col-head{
+    position:sticky; top:0; z-index:5; background:var(--bg);
+    padding:10px 0 12px; display:grid; grid-template-columns:1fr 1fr; gap:14px;
+    border-bottom:1px solid var(--border); margin-bottom:8px;
+  }
+  .tag{
+    display:flex; align-items:center; gap:9px; font-weight:600; font-size:.9rem;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:11px 15px;
+  }
+  .tag small{font-weight:400; color:var(--text-3); font-size:.78rem; margin-left:auto}
+  .dot{width:9px; height:9px; border-radius:50%; flex-shrink:0}
+  .dot.old{background:var(--red)}
+  .dot.new{background:var(--green)}
+
+  .row-label{
+    grid-column:1 / -1; display:flex; align-items:baseline; gap:12px;
+    margin:26px 0 2px; padding-bottom:8px; flex-wrap:wrap;
+  }
+  .row-label .n{
+    font-family:'Fraunces',serif; font-size:.9rem; color:var(--accent);
+    background:var(--accent-soft); width:26px; height:26px; border-radius:50%;
+    display:grid; place-items:center; flex-shrink:0; font-weight:700;
+  }
+  .row-label .t{font-weight:600; font-size:1rem}
+  .row-label .why{color:var(--text-3); font-size:.85rem; flex-basis:100%; padding-left:38px}
+  .badge{
+    font-size:.66rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    padding:3px 9px; border-radius:999px; margin-left:auto;
+  }
+  .b-add{background:var(--green-soft); color:var(--green)}
+  .b-replace{background:var(--accent-soft); color:var(--accent)}
+  .b-edit{background:var(--amber-soft); color:var(--amber)}
+
+  pre{
+    margin:0; background:var(--code-bg); color:var(--code-fg);
+    border-radius:14px; padding:16px 18px; overflow-x:auto;
+    font-size:.775rem; line-height:1.62; height:100%;
+    border-left:3px solid transparent;
+  }
+  pre.old{border-left-color:var(--red); opacity:.86}
+  pre.new{border-left-color:var(--green)}
+  pre.none{
+    background:var(--surface-2); color:var(--text-3); display:flex;
+    align-items:center; justify-content:center; font-style:italic;
+    border-left-color:var(--border); font-size:.85rem; text-align:center;
+  }
+  code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace}
+  .k{color:#c792ea}
+  .s{color:#c3e88d}
+  .c{color:#6b7089; font-style:italic}
+  .d{color:#ffcb6b}
+  .ty{color:#82aaff}
+
+  table{width:100%; border-collapse:collapse; font-size:.9rem; margin-top:6px}
+  th,td{text-align:left; padding:13px 14px; border-bottom:1px solid var(--border); vertical-align:top}
+  th{font-size:.7rem; text-transform:uppercase; letter-spacing:.06em;
+     color:var(--text-3); font-weight:600}
+  td:first-child{font-weight:600; width:22%}
+  td:nth-child(2){width:20%; color:var(--accent); font-family:ui-monospace,Menlo,monospace; font-size:.82rem}
+  td:nth-child(3){color:var(--text-2)}
+  tr:last-child td{border-bottom:none}
+  table.metrics td:nth-child(2),
+  table.metrics td:nth-child(3),
+  table.metrics td:nth-child(4),
+  table.metrics td:nth-child(5){
+    width:auto; font-family:ui-monospace,Menlo,monospace; font-size:.82rem;
+    color:var(--text-2); text-align:right;
+  }
+  table.metrics tr:last-child td{font-weight:700; color:var(--green)}
+
+  .callout{border-radius:14px; padding:16px 18px; margin:22px 0; font-size:.92rem;
+    border:1px solid transparent}
+  .callout.key{background:var(--accent-soft); border-color:rgba(61,90,241,.2)}
+  .callout.warn{background:var(--amber-soft); border-color:rgba(138,97,0,.2)}
+  .callout.ok{background:var(--green-soft); border-color:rgba(15,123,82,.25)}
+  .callout strong{display:block; margin-bottom:4px}
+
+  .untouched{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:20px 22px; margin-top:22px;
+  }
+  .untouched h4{margin:0 0 12px; font-size:.95rem}
+  .untouched ul{margin:0; padding-left:20px; color:var(--text-2); font-size:.9rem}
+  .untouched li{margin-bottom:6px}
+  .untouched code{background:var(--surface-2); padding:2px 6px; border-radius:5px; font-size:.85em}
+
+  footer{margin-top:56px; padding-top:20px; border-top:1px solid var(--border);
+    color:var(--text-3); font-size:.82rem}
+
+  @media(max-width:960px){
+    .grid,.col-head{grid-template-columns:1fr}
+    .col-head{position:static}
+    .badge{margin-left:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">AIForFounders · backend/scripts/book_chunking.py</div>
+  <h1>Ten changes to your chunker</h1>
+  <p class="lede">Left is your file as it stands today, verbatim, so you can find each block by search. Right is what replaces it. Everything not listed here stays exactly as you wrote it.</p>
+</header>
+
+<div class="summary">
+  <div class="stat warn"><div class="n">13</div><div class="l">recaps silently indexed —<br>the exact-match skip never fired</div></div>
+  <div class="stat warn"><div class="n">21</div><div class="l">orphan fragment chunks<br>from the 50-word overlap</div></div>
+  <div class="stat warn"><div class="n">5</div><div class="l">front/back-matter files<br>the glob picks up</div></div>
+  <div class="stat good"><div class="n">347</div><div class="l">clean chunks after<br>all ten changes</div></div>
+</div>
+
+<h2 class="first">The changes</h2>
+<p class="sub">Ordered as they appear in your file, top to bottom.</p>
+
+<div class="col-head">
+  <div class="tag"><span class="dot old"></span> Your code now <small>book_chunking.py</small></div>
+  <div class="tag"><span class="dot new"></span> Replace with <small>tested against your manuscript</small></div>
+</div>
+
+<div class="grid">
+
+  <div class="row-label">
+    <span class="n">1</span><span class="t">Imports</span>
+    <span class="badge b-edit">edit</span>
+    <span class="why">Drop <code>dotenv</code> — pydantic-settings already reads <code>.env</code>, and keeping both hides the path bug in change 2. Add <code>math</code>, <code>StrEnum</code>, and <code>field_validator</code>.</span>
+  </div>
+  <pre class="old"><code class="py">from __future__ import annotations
+import json
+import re
+from collections.abc import Iterator
+from pathlib import Path
+from typing import Final
+
+import dotenv
+from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
+
+from pydantic import (
+    BaseModel, ConfigDict, Field, computed_field
+)
+
+from pydantic_settings import (
+    BaseSettings, SettingsConfigDict
+)
+
+dotenv.load_dotenv()</code></pre>
+  <pre class="new"><code class="py">from __future__ import annotations
+import json
+import math
+import re
+from collections.abc import Iterator
+from enum import StrEnum
+from pathlib import Path
+from typing import Final
+
+from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
+
+from pydantic import (
+    BaseModel, ConfigDict, Field, computed_field, field_validator
+)
+
+from pydantic_settings import (
+    BaseSettings, SettingsConfigDict
+)</code></pre>
+
+  <div class="row-label">
+    <span class="n">2</span><span class="t">Anchor paths to the file, not the shell</span>
+    <span class="badge b-add">add</span>
+    <span class="why">Today <code>env_file=".env"</code> resolves against your working directory, and <code>BOOK_SOURCE_PATH</code> is relative too — so the script only works when run from <code>backend/</code>. Run it from <code>scripts/</code> and you get zero chunks. <code>load_dotenv()</code> was masking half of this by walking up the tree.</span>
+  </div>
+  <pre class="none"><code>nothing here yet — add above the constants,
+then the two validators inside Settings</code></pre>
+  <pre class="new"><code class="py">BACKEND_DIR: Final[Path] = Path(__file__).resolve().parents[1]
+
+
+# ... and inside class Settings:
+
+    model_config = SettingsConfigDict(
+        env_file=BACKEND_DIR / ".env", extra="ignore"
+    )
+
+    @field_validator("book_source_path", "chunks_out", mode="after")
+    @classmethod
+    def _anchor(cls, v: Path) -&gt; Path:
+        return v if v.is_absolute() else (BACKEND_DIR / v).resolve()
+
+    @field_validator("book_source_path", mode="after")
+    @classmethod
+    def _must_exist(cls, v: Path) -&gt; Path:
+        if not v.is_dir():
+            raise ValueError(f"BOOK_SOURCE_PATH is not a directory: {v}")
+        return v</code></pre>
+
+  <div class="row-label">
+    <span class="n">3</span><span class="t">Constants — classify, don't skip</span>
+    <span class="badge b-replace">replace</span>
+    <span class="why">Your <code>skip_sections</code> matches the literal string <code>"chapter in a nutshell"</code>. Your real headings are <code>"Chapter 1 in a nutshell"</code>, <code>"Moats in a nutshell"</code>, <code>"Legal and IP in a Nutshell"</code>, <code>"Raising money in a bubble, in a nutshell"</code> — not one of the 13 matches, so every recap lands in the index untagged.</span>
+  </div>
+  <pre class="old"><code class="py">skip_sections : Final[frozenset[str]] = frozenset(
+    {"sources", "chapter in a nutshell"}
+)</code></pre>
+  <pre class="new"><code class="py"># Bibliographies read as junk when cited as prose.
+DROP_SECTIONS: Final[frozenset[str]] = frozenset({"sources"})
+
+# Never an answer to any question about the book's ideas.
+DROP_FILES: Final[frozenset[str]] = frozenset({
+    "00a-title-page.md",
+    "00b-copyright.md",
+    "00c2-acknowledgments.md",   # names real people
+    "17-about-the-author.md",
+})
+
+
+class ChunkKind(StrEnum):
+    PROSE = "prose"
+    RECAP = "recap"        # "... in a nutshell"
+    TOC = "toc"
+    GLOSSARY = "glossary"</code></pre>
+
+  <div class="row-label">
+    <span class="n">4</span><span class="t">Settings — overlap out, merge floor in</span>
+    <span class="badge b-edit">edit</span>
+    <span class="why">The overlap is what produced the duplicate fragments. Measurement below.</span>
+  </div>
+  <pre class="old"><code class="py">    book_source_path : Path
+    chunks_out: Path = Path("data/chunks.jsonl")
+    target_words: int = Field(default=350, gt=0)
+    overlap_words: int = Field(default=50, ge=0)
+    min_words: int = Field(default=60, gt=0)</code></pre>
+  <pre class="new"><code class="py">    book_source_path : Path
+    chunks_out: Path = Path("data/chunks.jsonl")
+    target_words: int = Field(default=350, gt=0)
+    min_words: int = Field(default=60, gt=0)
+    merge_floor: int = Field(default=150, gt=0)</code></pre>
+
+  <div class="row-label">
+    <span class="n">5</span><span class="t">Chunk model — add <code>kind</code></span>
+    <span class="badge b-edit">edit</span>
+    <span class="why">Two lines. Also removes the stray space after <code>:\n\n</code> in <code>embed_text</code>, which was prefixing every embedded chunk with whitespace.</span>
+  </div>
+  <pre class="old"><code class="py">    id: int
+    source_file: str
+    chapter: str = Field(min_length=1)
+    section: str = Field(min_length=1)
+    content: str = Field(min_length=1)
+
+    @computed_field
+    @property
+    def embed_text(self) -&gt; str:
+        return (
+            f"From '{self.chapter}', section '{self.section}':\n\n {self.content}"
+        )</code></pre>
+  <pre class="new"><code class="py">    id: int
+    source_file: str
+    chapter: str = Field(min_length=1)
+    section: str = Field(min_length=1)
+    content: str = Field(min_length=1)
+    kind: ChunkKind = ChunkKind.PROSE
+
+    @computed_field
+    @property
+    def embed_text(self) -&gt; str:
+        return (
+            f"From '{self.chapter}', section '{self.section}':\n\n{self.content}"
+        )</code></pre>
+
+  <div class="row-label">
+    <span class="n">6</span><span class="t">Balanced splitting, per section</span>
+    <span class="badge b-replace">replace</span>
+    <span class="why">One splitter for the whole book cuts a 400-word section into 350 plus a 50-word runt. Sizing per section gives two chunks of 200 instead. Note this is a change made <em>against</em> the library's default, not with it.</span>
+  </div>
+  <pre class="old"><code class="py">def make_body_splitter(s: Settings) -&gt; RecursiveCharacterTextSplitter:
+    return RecursiveCharacterTextSplitter(
+        chunk_size=s.target_words,
+        chunk_overlap=s.overlap_words,
+        length_function= lambda t: len(t.split()),
+        separators=["\n\n", "\n", ". ", " ", ""]
+    )</code></pre>
+  <pre class="new"><code class="py">def split_section(doc: Document, s: Settings) -&gt; list[Document]:
+    """Even pieces, so there's no runt at the end."""
+    words = len(doc.page_content.split())
+    if words &lt;= s.target_words * 1.15:
+        return [doc]                      # close enough — leave it whole
+
+    n = math.ceil(words / s.target_words)
+    size = math.ceil(words / n)           # 400 words -&gt; 2 x 200
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=size,
+        chunk_overlap=0,                  # &lt;- was s.overlap_words
+        length_function= lambda t: len(t.split()),
+        separators=["\n\n", "\n", ". ", " ", ""]
+    )
+    return splitter.split_documents([doc])</code></pre>
+
+  <div class="row-label">
+    <span class="n">7</span><span class="t">Split the skip into drop + classify</span>
+    <span class="badge b-replace">replace</span>
+    <span class="why">Only bibliographies get deleted. Recaps, the table of contents and the glossary get <em>tagged</em>, so you can filter them at query time instead of losing them.</span>
+  </div>
+  <pre class="old"><code class="py">## skipping biblographies and recaps
+def is_skipped(doc: Document) -&gt; bool:
+    names = {
+        str(doc.metadata.get(k, "")).lower().strip()
+        for k in ("section", "subsection")
+    }
+    return bool(names &amp; skip_sections)</code></pre>
+  <pre class="new"><code class="py">## bibliographies are the only thing worth deleting outright
+def is_dropped(doc: Document) -&gt; bool:
+    return any(
+        str(doc.metadata.get(k, "")).lower().strip() in DROP_SECTIONS
+        for k in ("section", "subsection")
+    )
+
+
+def classify(doc: Document) -&gt; ChunkKind:
+    m = doc.metadata
+    name = str(m.get("subsection") or m.get("section") or "").lower().strip()
+    file = str(m.get("source_file", ""))
+
+    if name.endswith("in a nutshell"):    # &lt;- suffix, not exact match
+        return ChunkKind.RECAP
+    if file.startswith("00c-contents"):
+        return ChunkKind.TOC
+    if file.startswith("15-glossary"):
+        return ChunkKind.GLOSSARY
+    return ChunkKind.PROSE</code></pre>
+
+  <div class="row-label">
+    <span class="n">8</span><span class="t">Merge orphan tails</span>
+    <span class="badge b-add">add</span>
+    <span class="why">New function, goes after <code>classify</code>. The splitter still undershoots at separator boundaries, so eight short fragments survive change 6. Fold each back into the chunk it belongs to.</span>
+  </div>
+  <pre class="none"><code>new function — nothing to replace</code></pre>
+  <pre class="new"><code class="py">def merge_orphan_tails(chunks: list[Chunk], floor: int) -&gt; list[Chunk]:
+    """A short trailing chunk in the same section is a fragment,
+    not an idea. Fold it back into its predecessor."""
+    out: list[Chunk] = []
+    for c in chunks:
+        prev = out[-1] if out else None
+        same_section = prev is not None and (
+            (prev.chapter, prev.section) == (c.chapter, c.section)
+        )
+        if same_section and c.word_count &lt; floor:
+            out[-1] = prev.model_copy(update={
+                "content": prev.content + "\n\n" + c.content
+            })
+            continue
+        out.append(c)
+
+    # ids must stay contiguous after merging
+    return [c.model_copy(update={"id": i}) for i, c in enumerate(out)]</code></pre>
+
+  <div class="row-label">
+    <span class="n">9</span><span class="t">The main loop</span>
+    <span class="badge b-replace">replace</span>
+    <span class="why">Three edits: skip the front matter, split per section instead of in one pass, and set <code>kind</code>. Your <code>scripts</code> variable is renamed, since it holds manuscript files rather than scripts.</span>
+  </div>
+  <pre class="old"><code class="py">def iter_chunks(s: Settings) -&gt; Iterator[Chunk]:
+    header = make_header_splitter()
+    body = make_body_splitter(s)
+    next_id = 0
+
+    scripts: Iterator[Path] = sorted(s.book_source_path.glob("*.md"))
+
+    for path in scripts:
+        sections: list[Document] = header.split_text(path.read_text(encoding="utf-8"))
+
+        for doc in sections:
+            doc.metadata["source_file"] = path.name
+
+        chunk_level_documents: list[Document] = body.split_documents(sections)
+
+        for doc in chunk_level_documents:
+            if(is_skipped(doc)):
+                continue
+
+            content = clean(doc.page_content)
+            if(len(content.split()) &lt; s.min_words):
+                continue
+
+            meta = doc.metadata
+
+            yield Chunk(
+                id = next_id,
+                source_file=str(meta["source_file"]),
+                chapter= str(meta.get("chapter", "Unknown chapter")),
+                section= str(meta.get("subsection") or meta.get("section") or "Opening"),
+                content= content
+            )
+            next_id += 1</code></pre>
+  <pre class="new"><code class="py">def iter_chunks(s: Settings) -&gt; Iterator[Chunk]:
+    header = make_header_splitter()
+    next_id = 0
+
+    # Explicit allowlist. The book repo holds four copies of the
+    # manuscript, and this folder holds 22 .md files, not 13.
+    manuscript: list[Path] = sorted(s.book_source_path.glob("*.md"))
+
+    for path in manuscript:
+        if path.name in DROP_FILES:
+            continue
+
+        sections: list[Document] = header.split_text(path.read_text(encoding="utf-8"))
+
+        for doc in sections:
+            doc.metadata["source_file"] = path.name
+
+        for doc in sections:
+            if is_dropped(doc):
+                continue
+
+            for piece in split_section(doc, s):
+                content = clean(piece.page_content)
+                if len(content.split()) &lt; s.min_words:
+                    continue
+
+                meta = piece.metadata
+
+                yield Chunk(
+                    id = next_id,
+                    source_file=str(meta["source_file"]),
+                    chapter= str(meta.get("chapter", "Unknown chapter")),
+                    section= str(meta.get("subsection") or meta.get("section") or "Opening"),
+                    content= content,
+                    kind= classify(piece)
+                )
+                next_id += 1</code></pre>
+
+  <div class="row-label">
+    <span class="n">10</span><span class="t">Wire the merge into main</span>
+    <span class="badge b-edit">edit</span>
+    <span class="why">One line. Everything below it in <code>main()</code> stays as written.</span>
+  </div>
+  <pre class="old"><code class="py">def main() -&gt; None:
+    settings = Settings()
+    chunks: list[Chunk] = list(iter_chunks(settings))</code></pre>
+  <pre class="new"><code class="py">def main() -&gt; None:
+    settings = Settings()
+    chunks: list[Chunk] = merge_orphan_tails(
+        list(iter_chunks(settings)), settings.merge_floor
+    )</code></pre>
+
+</div>
+
+<div class="untouched">
+  <h4>Leave these exactly as they are</h4>
+  <ul>
+    <li><code>clean()</code>, <code>strip_images()</code>, <code>unwrap_links()</code>, <code>unescape_dollors()</code> — the light-touch cleaning is right. Optionally add <code>.replace("&amp;nbsp;", " ")</code>, since the contents file carries HTML entities.</li>
+    <li><code>make_header_splitter()</code> — the lowercase metadata keys are correct and match every lookup downstream.</li>
+    <li>The <code>Chunk</code> model's <code>frozen=True</code>, <code>word_count</code>, and <code>Field(min_length=1)</code> guards.</li>
+    <li>Everything in <code>main()</code> below its first two lines.</li>
+  </ul>
+</div>
+
+<div class="callout ok">
+  <strong>After the changes</strong>
+  <code>347 chunks -&gt; data/chunks.jsonl</code> — zero orphan fragments, zero near-duplicates, median 193 words, ids contiguous, and tagged <code>329 prose / 13 recap / 4 glossary / 1 toc</code>. Verified by running the fully patched file against all 21 of your manuscript files, from two different working directories. Add a <code>kind TEXT</code> column to the Postgres schema before you embed.
+</div>
+
+<h2>Why: the orphan chunks</h2>
+<p class="sub">Overlap was producing near-duplicate fragments — a section slightly over target split into a full chunk plus a runt that was mostly the overlap repeated. Five configurations, measured across your 13 chapter files. (The final patched script, run on the full 21-file folder, lands at 347 chunks with the same zero/zero result.) An <em>orphan</em> is a chunk under 150 words following another from the same section; a <em>near-duplicate</em> is one whose words are more than 70% contained in its predecessor.</p>
+
+<table class="metrics">
+  <thead><tr><th>Configuration</th><th>Chunks</th><th>Orphans</th><th>Near-dupes</th><th>Median words</th></tr></thead>
+  <tbody>
+    <tr><td>A &nbsp;fixed 350, overlap 50 <em>(your code today)</em></td><td>359</td><td>21</td><td>4</td><td>194</td></tr>
+    <tr><td>B &nbsp;balanced, overlap 50</td><td>366</td><td>17</td><td>1</td><td>195</td></tr>
+    <tr><td>C &nbsp;fixed 350, overlap 0</td><td>350</td><td>18</td><td>0</td><td>195</td></tr>
+    <tr><td>D &nbsp;balanced, overlap 0</td><td>352</td><td>8</td><td>0</td><td>198</td></tr>
+    <tr><td>E &nbsp;balanced, overlap 0, tails merged</td><td>344</td><td>0</td><td>0</td><td>202</td></tr>
+  </tbody>
+</table>
+
+<div class="callout key">
+  <strong>Three changes, in order of impact</strong>
+  <strong style="display:block;margin-top:10px">1. Overlap to zero.</strong> This alone eliminates every near-duplicate. Overlap exists to repair <em>blind</em> cuts; a recursive splitter cuts at paragraph and sentence boundaries, so there is nothing to repair. Fifty words of duplication per split bought nothing and cost you top-k slots.
+  <strong style="display:block;margin-top:10px">2. Balanced sizing.</strong> Compute how many pieces a section needs and divide evenly. Halves the remaining orphans by construction.
+  <strong style="display:block;margin-top:10px">3. Merge what's left.</strong> Eight stragglers survive at separator boundaries. A coherent 400-word chunk beats a 350 plus a fragment.
+</div>
+
+<h2>Why: classify instead of delete</h2>
+<p class="sub">An earlier version of this page said to delete the recaps and the table of contents. That was wrong on both counts, for the same reason: deletion is an irreversible decision made before you have any evidence.</p>
+
+<table>
+  <thead><tr><th>Content</th><th>Verdict</th><th>Reasoning</th></tr></thead>
+  <tbody>
+    <tr><td>Chapter recaps</td><td>kind = recap</td>
+      <td>A recap's embedding is <em>diffuse</em> — it sits near the average of a chapter's topics, not near any one sharply. A focused question still retrieves the focused passage; the recap only wins on broad questions, which is exactly when you want it. About 14 chunks, 4% of the index.</td></tr>
+    <tr><td>Table of contents</td><td>kind = toc</td>
+      <td>"What's in this book?" is among the first things a reader asks. Keep the chunk — but the real fix is putting the chapter list in the <em>system prompt</em>, where it costs ~150 tokens, can never fail to retrieve, and gives the model a map of the whole book on every question.</td></tr>
+    <tr><td>Glossary</td><td>kind = glossary</td>
+      <td>Readers ask "what does X mean." Definitions are short and self-contained, which makes unusually good chunks.</td></tr>
+    <tr><td>Copyright, title page, about-the-author</td><td>dropped</td>
+      <td>Legal boilerplate that can only ever be a false positive.</td></tr>
+    <tr><td>Acknowledgments</td><td>dropped</td>
+      <td>Names real people — family and colleagues who did not agree to appear in a public chatbot. A privacy call before a retrieval one.</td></tr>
+    <tr><td>## Sources</td><td>dropped</td>
+      <td>Bibliographies retrieved as prose produce answers like "according to the book, https://fortune.com/…".</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <strong>The principle</strong>
+  Decide at <em>retrieval</em> time wherever you can. Drop at index time only for content that could never be a good answer to any question. Everything else gets a tag, because a tag is free and reversible while a deletion means re-indexing.
+</div>
+
+<h2>Reference: the chunking parameters</h2>
+<p class="sub">Every setting trades retrieval precision (small chunks match questions sharply) against answer completeness (large chunks carry whole arguments).</p>
+
+<table>
+  <thead><tr><th>Decision</th><th>Setting</th><th>Reasoning</th></tr></thead>
+  <tbody>
+    <tr><td>Primary split</td><td>markdown headings</td>
+      <td>You already did the semantic chunking when you wrote the book — grouping related ideas under a heading is exactly what a chunker tries to infer. Your clean <code>#</code>/<code>##</code>/<code>###</code> hierarchy makes it nearly free.</td></tr>
+    <tr><td>Secondary split</td><td>¶ → line → sentence → word</td>
+      <td>Sections range from ~100 to ~2,000 words. Falling back through natural boundaries means a chunk almost never begins mid-sentence — a fragment reads as incoherent to both the embedding model and to Gemini.</td></tr>
+    <tr><td>Chunk size</td><td>350 words ≈ 470 tokens</td>
+      <td>Large enough to hold a claim plus its support; small enough that a top-8 retrieval stays specific. Anthropic's contextual-retrieval work used ~800-token chunks, so this sits in the same range.</td></tr>
+    <tr><td>Overlap</td><td>0 &nbsp;<em>(was 50)</em></td>
+      <td>Overlap repairs <em>blind</em> cuts. Splitting on paragraph and sentence boundaries means the cuts aren't blind, so the 50 words bought nothing and produced near-duplicates competing for top-k slots.</td></tr>
+    <tr><td>Minimum size</td><td>60 words</td>
+      <td>Sub-60-word fragments are usually orphaned headings or list stubs. They embed to vague vectors that match everything weakly and nothing well.</td></tr>
+    <tr><td>Merge floor</td><td>150 words</td>
+      <td>Deliberately above <code>min_words</code>: a 100-word tail is long enough to survive the size filter but still too short to stand alone as an idea.</td></tr>
+    <tr><td>Embed ≠ store</td><td>embed_text vs content</td>
+      <td>The highest-leverage line in the file. Mid-chapter text says "this approach fails at scale" without naming the approach — the heading two pages up did that. Prepending chapter and section before embedding restores the missing subject. Clean <code>content</code> still goes to Gemini.</td></tr>
+    <tr><td>Source files</td><td>final-manuscript/*.md</td>
+      <td>Your book repo holds four copies of the manuscript. Indexing two versions means retrieval can hand Gemini contradictory drafts of the same passage, and you'd likely never notice.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <strong>None of this is settled until you measure it</strong>
+  Everything above is informed prior, not proof. Write 30–40 questions real readers would ask, note which section genuinely answers each, then track how often the right section lands in your top-k. Change one variable, re-run, watch the number. An afternoon of that beats any amount of reading about chunking — including this page.
+</div>
+
+<h2>Reference: what the type layer buys you</h2>
+<p class="sub">Python gives you two independent layers. Annotations checked by pyright catch errors before you run; pydantic validates at runtime, when data crosses a boundary. TypeScript's types are erased at compile time — pydantic's are not.</p>
+
+<table>
+  <thead><tr><th>Construct</th><th>Where</th><th>What it prevents</th></tr></thead>
+  <tbody>
+    <tr><td>BaseSettings</td><td>class Settings</td>
+      <td>Config parsed and validated once at startup. A missing env var fails immediately with a clear message instead of a <code>KeyError</code> twenty lines into the run.</td></tr>
+    <tr><td>field_validator</td><td>book_source_path</td>
+      <td>Change 2. Relative paths anchor to <code>backend/</code>, and a typo'd path fails loudly instead of silently producing zero chunks.</td></tr>
+    <tr><td>frozen=True</td><td>class Chunk</td>
+      <td>Chunks are immutable value objects, which is why the merge uses <code>model_copy(update=...)</code> to return a new one rather than mutating in place.</td></tr>
+    <tr><td>computed_field</td><td>embed_text, word_count</td>
+      <td>Derived from content, so they cannot drift out of sync. They still serialize into the JSONL via <code>model_dump_json()</code>.</td></tr>
+    <tr><td>StrEnum</td><td>ChunkKind</td>
+      <td>Serializes as a plain string into JSONL and Postgres, while pyright rejects any value outside the four.</td></tr>
+    <tr><td>Field(min_length=1)</td><td>chapter, section, content</td>
+      <td>An empty chunk raises at construction rather than entering your index and embedding to a meaningless vector.</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  AIForFounders — chunking reference · pairs with <code>API_CONTRACT.md</code> and <code>backend/README.md</code>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var RE = /(#[^\n]*)|("""[\s\S]*?"""|"[^"\n]*"|'[^'\n]*')|(@[\w.]+)|\b(from|import|def|return|for|in|if|not|and|or|else|elif|with|as|class|lambda|continue|break|yield|True|False|None|is|async|await)\b|\b(str|int|bool|float|list|dict|tuple|set|frozenset|Path|Iterator|Final|Document|Chunk|Settings|BaseModel|BaseSettings|ChunkKind|StrEnum)\b/g;
+  document.querySelectorAll('code.py').forEach(function(el){
+    el.innerHTML = el.innerHTML.replace(RE, function(m, c, s, d, k, t){
+      if (c) return '<span class="c">' + m + '</span>';
+      if (s) return '<span class="s">' + m + '</span>';
+      if (d) return '<span class="d">' + m + '</span>';
+      if (k) return '<span class="k">' + m + '</span>';
+      return '<span class="ty">' + m + '</span>';
+    });
+  });
+})();
+</script>
+</body>
+</html>

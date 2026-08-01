@@ -11,7 +11,7 @@ export default function Sidebar({ open, chats, activeChatId, onNewChat, onSelect
 
       <aside className={`sidebar ${open ? '' : 'closed'}`}>
         <div className="sidebar-brand">
-          <span className="brand-mark">AF</span>
+          <img className="brand-mark" src="/avatar.jpg" alt="" width="28" height="28" />
           <span>AI for Founders</span>
         </div>
 

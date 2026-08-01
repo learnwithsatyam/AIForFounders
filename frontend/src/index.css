@@ -173,20 +173,13 @@ body {
 .brand-mark {
   width: 28px;
   height: 28px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  background-size: 160% 160%;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  font-family: 'Fraunces', serif;
-  font-size: 0.85rem;
-  animation: brand-drift 9s ease-in-out infinite;
-}
-
-@keyframes brand-drift {
-  0%, 100% { background-position: 0% 50%; }
-  50%      { background-position: 100% 50%; }
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  /* The artwork sits on cream, so it needs an edge to read against either
+     theme rather than bleeding into the sidebar. */
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .new-chat-btn {
@@ -486,10 +479,18 @@ body {
 
 .msg.user .msg-avatar { background: var(--surface-2); color: var(--text-2); }
 
-.msg.assistant .msg-avatar {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #fff;
-  font-family: 'Fraunces', serif;
+img.msg-avatar {
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+/* Breathes while the answer is being worked out, then settles. */
+.msg-avatar.live { animation: avatar-pulse 2s ease-in-out infinite; }
+
+@keyframes avatar-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--ring-1); }
+  50%      { box-shadow: 0 0 0 5px var(--ring-2); }
 }
 
 .msg-body { min-width: 0; flex: 1; }

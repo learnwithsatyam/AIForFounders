@@ -11,9 +11,19 @@ function ChatMessage({ message }) {
 
   return (
     <div className={`msg ${isUser ? 'user' : 'assistant'}`}>
-      <div className="msg-avatar" aria-hidden="true">
-        {isUser ? 'You' : 'AF'}
-      </div>
+      {isUser ? (
+        <div className="msg-avatar" aria-hidden="true">
+          You
+        </div>
+      ) : (
+        <img
+          className={`msg-avatar${streaming || thinking ? ' live' : ''}`}
+          src="/avatar.jpg"
+          alt=""
+          width="32"
+          height="32"
+        />
+      )}
 
       <div className="msg-body">
         {isUser ? (

@@ -83,7 +83,18 @@ class Engine:
     def __init__(self, s: Settings) -> None:
         self.s = s
         self.client = genai.Client(api_key=s.gemini_api_key)
-        self.pool = AsyncConnectionPool(s.database_url, min_size=1, max_size=4, open=False)
+        # `check` runs a liveness probe before a pooled connection is handed
+        # out, replacing it if it has died. Without this, a serverless Postgres
+        # that suspends on idle (Neon's free tier does, after ~5 minutes) leaves
+        # stale sockets in the pool and the first question after a quiet spell
+        # fails — psycopg's default is no check at all.
+        self.pool = AsyncConnectionPool(
+            s.database_url,
+            min_size=1,
+            max_size=4,
+            open=False,
+            check=AsyncConnectionPool.check_connection,
+        )
         self.chapters: list[str] = []
 
     async def start(self) -> None:

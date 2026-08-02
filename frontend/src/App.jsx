@@ -88,10 +88,13 @@ export default function App() {
     const controller = new AbortController()
     abortRef.current = controller
 
-    const history = [...activeChat.messages, userMsg].map(({ role, content }) => ({
-      role,
-      content,
-    }))
+    // An answer that errored, or was stopped before producing a word, sits in
+    // the thread with no content. Replaying it as history says nothing and the
+    // API rejects it (422, content must be non-empty) — which would otherwise
+    // brick every later question in this conversation, not just the failed one.
+    const history = [...activeChat.messages, userMsg]
+      .filter((m) => m.content.trim())
+      .map(({ role, content }) => ({ role, content }))
 
     const patchLast = (patch) =>
       updateChat(chatId, (c) => {

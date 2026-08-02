@@ -55,3 +55,33 @@ npm run build              # outputs frontend/dist/
 
 Serve `frontend/dist/` as static files from your Python app so the UI and API
 share one origin, one port, one deploy.
+
+## Deploy (Fly.io)
+
+The `Dockerfile` builds the UI and bakes it into the Python image, so the whole
+app ships as one container. `fly.toml` pins it to a single always-on machine in
+Singapore, next to the Neon project.
+
+```bash
+fly launch --no-deploy --copy-config          # creates the app from fly.toml
+fly secrets set DATABASE_URL='postgresql://…' GEMINI_API_KEY='…'
+fly deploy
+fly logs                                      # watch the first boot
+```
+
+Those two secrets are the only environment the container needs — `backend/.env`
+is excluded from the image by `.dockerignore`.
+
+Two settings there are deliberate and worth not "optimising" away:
+
+- **`auto_stop_machines = 'off'` / `min_machines_running = 1`.** Scale-to-zero
+  costs double here: waking the container *and* waking a suspended Neon compute,
+  in series, before the first question can be answered. It also keeps the pool's
+  idle connection alive, which helps hold Neon awake.
+- **512MB.** The app measures ~121MB just to import its dependencies, before
+  serving anything. 256MB will OOM under load, and an OOM kill mid-answer looks
+  like a streaming bug.
+
+The rate limiter in `backend/app/limits.py` is per-process, so this must stay a
+single machine with a single worker. Running two of either silently doubles the
+daily cap that bounds your Gemini bill.

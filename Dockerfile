@@ -19,4 +19,8 @@ COPY --from=ui /ui/dist ./frontend/dist
 
 WORKDIR /srv/backend
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Honour $PORT when the platform injects one (Render, Railway, DigitalOcean and
+# Cloud Run all do; Cloud Run fails the deploy outright without it). Fly sets
+# the port in fly.toml instead, so the 8000 fallback covers it and local runs.
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

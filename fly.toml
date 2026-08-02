@@ -1,0 +1,65 @@
+# Fly.io — one always-on machine in Singapore, sitting next to the Neon project.
+#
+#   fly launch --no-deploy --copy-config
+#   fly secrets set DATABASE_URL='postgresql://…' GEMINI_API_KEY='…'
+#   fly deploy
+#
+# `app` must be globally unique across Fly; change it if launch complains.
+
+app = 'aiforfounders'
+
+# The Neon project lives in ap-southeast-1. Every question makes a vector query
+# plus a liveness probe, so putting the app anywhere else adds two round trips
+# of latency to each one, forever.
+primary_region = 'sin'
+
+# Give an answer already streaming a chance to finish instead of being cut
+# mid-sentence when a deploy rolls the machine.
+kill_signal = 'SIGINT'
+kill_timeout = '30s'
+
+# Insurance, not a plan. 512MB is enough (the app measures ~121MB just to
+# import), but swap turns a bad-luck spike into a slow request rather than an
+# OOM kill that takes the machine down mid-answer.
+swap_size_mb = 512
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  PORT = '8000'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+
+  # The entire reason for paying: scale-to-zero here would mean booting Python
+  # *and* waking a suspended Neon compute in series, on the first question after
+  # a quiet spell. auto_start is kept on purely as a safety net if the machine
+  # ever stops for another reason.
+  auto_stop_machines = 'off'
+  auto_start_machines = true
+  min_machines_running = 1
+
+  # Answers stream as Server-Sent Events, so a connection is held open for as
+  # long as the model is writing. Concurrency has to be counted in open
+  # connections; counting requests would badly understate the load.
+  [http_service.concurrency]
+    type = 'connections'
+    soft_limit = 20
+    hard_limit = 25
+
+  # /api/health only reads memory — the chapter list is cached at startup — so
+  # probing it costs nothing. The grace period covers importing the dependency
+  # tree and running the startup query against Neon before traffic arrives.
+  [[http_service.checks]]
+    method = 'GET'
+    path = '/api/health'
+    interval = '30s'
+    timeout = '5s'
+    grace_period = '60s'
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '512mb'
+  cpus = 1

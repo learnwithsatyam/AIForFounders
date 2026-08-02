@@ -18,9 +18,10 @@ COPY backend/ ./backend/
 COPY --from=ui /ui/dist ./frontend/dist
 
 WORKDIR /srv/backend
-EXPOSE 8000
+EXPOSE 8080
 
 # Honour $PORT when the platform injects one (Render, Railway, DigitalOcean and
-# Cloud Run all do; Cloud Run fails the deploy outright without it). Fly sets
-# the port in fly.toml instead, so the 8000 fallback covers it and local runs.
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Cloud Run all do). The fallback is 8080 because that is what Fly's generated
+# config expects: Fly does not inject $PORT, so a container that defaults to
+# anything else is unreachable by fly-proxy and every health check times out.
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]

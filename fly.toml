@@ -27,10 +27,13 @@ swap_size_mb = 512
   dockerfile = 'Dockerfile'
 
 [env]
-  PORT = '8000'
+  PORT = '8080'
 
 [http_service]
-  internal_port = 8000
+  # 8080 is Fly's default expectation. Keeping it here, in [env] above and as
+  # the Dockerfile fallback means the container is reachable even if a
+  # generated config is used instead of this file.
+  internal_port = 8080
   force_https = true
 
   # The entire reason for paying: scale-to-zero here would mean booting Python
@@ -57,7 +60,7 @@ swap_size_mb = 512
     path = '/api/health'
     interval = '30s'
     timeout = '5s'
-    grace_period = '60s'
+    grace_period = '90s'
 
 [[vm]]
   size = 'shared-cpu-1x'

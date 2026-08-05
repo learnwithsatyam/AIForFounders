@@ -56,6 +56,37 @@ npm run build              # outputs frontend/dist/
 Serve `frontend/dist/` as static files from your Python app so the UI and API
 share one origin, one port, one deploy.
 
+## Usage tracking
+
+One row per question in the same Neon database, written after the answer has
+finished streaming. Durable across deploys, unlike the counters in `limits.py`.
+
+```bash
+python scripts/usage.py                 # last 7 days
+python scripts/usage.py --days 30
+python scripts/usage.py --questions 40  # raw questions, newest first
+python scripts/usage.py --misses        # what the book could not answer
+```
+
+`--misses` is the one worth reading. It surfaces questions that returned
+nothing, and near-misses where the closest passage was still far away — a
+table of contents for whatever you write next.
+
+The table is created at startup and recording can be turned off with
+`USAGE_ENABLED=false`. IP addresses are salted and hashed, never stored raw;
+questions are stored in full, which is what makes `--misses` useful.
+
+## Evals
+
+`backend/evals/` measures the RAG pipeline: retrieval accuracy, golden
+snapshots of the exact top-k, follow-up condensing, and LLM-judged answer
+groundedness. See `backend/evals/README.md`.
+
+```bash
+python evals/run.py            # retrieval, cheap, exits non-zero on regression
+python evals/run.py --suite all
+```
+
 ## Deploy (Fly.io)
 
 The `Dockerfile` builds the UI and bakes it into the Python image, so the whole

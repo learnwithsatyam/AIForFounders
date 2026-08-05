@@ -41,6 +41,16 @@ class Settings(LoaderSettings):
     rate_per_hour: int = Field(default=10, gt=0)
     rate_per_day: int = Field(default=2000, gt=0)
 
+    # Usage recording — see usage.py. Off by flipping usage_enabled=false.
+    usage_enabled: bool = True
+
+    # Salt for hashing IPs. Left empty it derives from database_url, which is
+    # already secret, already stable across restarts, and never leaves the
+    # server — so hashes stay comparable between deploys without asking you to
+    # manage another secret. Set it explicitly if you ever rotate the DB URL
+    # and want old rows to keep matching new ones.
+    usage_salt: str = ""
+
     # Built frontend, served so the UI and API share one origin.
     frontend_dist: Path = Path("../frontend/dist")
 

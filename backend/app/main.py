@@ -11,6 +11,7 @@ import json
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from time import perf_counter
 
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
@@ -20,6 +21,7 @@ from pydantic import BaseModel, Field, field_validator
 from .config import settings
 from .limits import Limiter
 from .rag import Engine, citations
+from .usage import Event, Recorder
 
 log = logging.getLogger("aiforfounders")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -27,6 +29,11 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 engine = Engine(settings)
 limiter = Limiter(
     per_hour=settings.rate_per_hour, per_day_global=settings.rate_per_day
+)
+recorder = Recorder(
+    engine.pool,
+    salt=settings.usage_salt or settings.database_url,
+    enabled=settings.usage_enabled,
 )
 
 
@@ -74,8 +81,11 @@ def client_ip(request: Request) -> str:
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     await engine.start()
+    await recorder.ensure_table()
     log.info("ready — %d chapters, k=%d", len(engine.chapters), settings.top_k)
     yield
+    # Let writes that are still in flight land before the pool closes under them.
+    await recorder.drain()
     await engine.stop()
 
 
@@ -88,54 +98,79 @@ app = FastAPI(title="AIForFounders — Ask the Book", lifespan=lifespan)
 async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
     messages = [m.model_dump() for m in body.messages]
     question = messages[-1]["content"]
+    event = Event(ip=client_ip(request), question=question, turn=len(messages))
 
     async def stream() -> AsyncIterator[str]:
-        if len(question) > settings.max_question_chars:
-            yield sse({
-                "type": "error",
-                "message": f"Questions are limited to {settings.max_question_chars} characters.",
-            })
-            return
-
-        refusal = limiter.check(client_ip(request))
-        if refusal:
-            yield sse({"type": "error", "message": refusal})
-            return
-
+        started = perf_counter()
         try:
-            standalone = await engine.condense(messages)
-            hits = await engine.retrieve(standalone)
-
-            if not hits:
+            if len(question) > settings.max_question_chars:
+                event.outcome = "too_long"
                 yield sse({
-                    "type": "delta",
-                    "text": "I could not find anything in the book about that.",
+                    "type": "error",
+                    "message": f"Questions are limited to {settings.max_question_chars} characters.",
                 })
-                yield sse({"type": "done"})
                 return
 
-            log.info(
-                "q=%r -> %r | top=%s %.4f",
-                question[:60], standalone[:60],
-                hits[0].chapter[:28], hits[0].distance,
-            )
+            refusal = limiter.check(event.ip)
+            if refusal:
+                event.outcome = "rate_limited"
+                yield sse({"type": "error", "message": refusal})
+                return
 
-            async for text in engine.answer(hits, messages):
-                # The user hit Stop; the client is gone. Stop paying for tokens.
-                if await request.is_disconnected():
-                    log.info("client disconnected mid-answer")
+            try:
+                standalone = await engine.condense(messages)
+                event.standalone = standalone
+                hits = await engine.retrieve(standalone)
+
+                if not hits:
+                    event.outcome = "no_hits"
+                    yield sse({
+                        "type": "delta",
+                        "text": "I could not find anything in the book about that.",
+                    })
+                    yield sse({"type": "done"})
                     return
-                yield sse({"type": "delta", "text": text})
 
-            yield sse({"type": "citations", "citations": citations(hits)})
-            yield sse({"type": "done"})
+                # Distinct chapters in rank order — this is the column that
+                # answers "which parts of the book do readers actually need".
+                event.chapters = list(dict.fromkeys(h.chapter for h in hits))
+                event.top_distance = hits[0].distance
 
-        except Exception:
-            log.exception("chat failed")
-            yield sse({
-                "type": "error",
-                "message": "Something went wrong answering that. Please try again.",
-            })
+                log.info(
+                    "q=%r -> %r | top=%s %.4f",
+                    question[:60], standalone[:60],
+                    hits[0].chapter[:28], hits[0].distance,
+                )
+
+                async for text in engine.answer(hits, messages):
+                    # The user hit Stop; the client is gone. Stop paying for tokens.
+                    if await request.is_disconnected():
+                        event.outcome = "disconnected"
+                        log.info("client disconnected mid-answer")
+                        return
+                    if event.ttft_ms is None:
+                        event.ttft_ms = int((perf_counter() - started) * 1000)
+                    event.answer_chars += len(text)
+                    yield sse({"type": "delta", "text": text})
+
+                yield sse({"type": "citations", "citations": citations(hits)})
+                yield sse({"type": "done"})
+                event.outcome = "ok"  # only now is it genuinely a success
+
+            except Exception:
+                event.outcome = "error"
+                log.exception("chat failed")
+                yield sse({
+                    "type": "error",
+                    "message": "Something went wrong answering that. Please try again.",
+                })
+        finally:
+            # Runs on every path including client disconnect, where Python
+            # throws GeneratorExit in at the yield above. submit() is
+            # deliberately synchronous — awaiting here would be unsafe while
+            # the generator is being closed, and would delay the response.
+            event.total_ms = int((perf_counter() - started) * 1000)
+            recorder.submit(event)
 
     return StreamingResponse(
         stream(),

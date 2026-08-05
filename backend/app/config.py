@@ -51,6 +51,11 @@ class Settings(LoaderSettings):
     # and want old rows to keep matching new ones.
     usage_salt: str = ""
 
+    # Admin dashboard at /admin. Unset means the routes 404 — a dashboard with
+    # a default password would be worse than no dashboard. Set it with
+    # `fly secrets set ADMIN_PASSWORD='…'`.
+    admin_password: str = ""
+
     # Built frontend, served so the UI and API share one origin.
     frontend_dist: Path = Path("../frontend/dist")
 

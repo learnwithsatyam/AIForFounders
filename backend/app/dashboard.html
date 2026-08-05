@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — AI for Founders</title>
+<script>
+  // Resolve theme before paint so a dark-mode admin never gets flashed white.
+  (function () {
+    var t; try { t = localStorage.getItem('af-admin-theme'); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') {
+      t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+<style>
+/* ---------------------------------------------------------------------------
+   Chart colours are declared as roles, so light/dark swap in one place and the
+   chart code never names a hex. Checked against the surfaces they actually
+   render on: accent 5.34:1 light / 6.61:1 dark. Status warning and serious sit
+   below 3:1 on the light surface by design — every status row therefore
+   carries a visible label and count, so colour never carries meaning alone.
+--------------------------------------------------------------------------- */
+:root, :root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f7f7f5;  --surface: #ffffff;  --surface-2: #efefec;
+  --border: #e3e2de;  --grid: #e8e7e3;
+  --ink: #1f1f1e;  --ink-2: #56564f;  --muted: #6e6e69;
+  --accent: #3d5af1;  --accent-soft: #eceffe;
+  --good: #0ca30c;  --warning: #fab219;  --serious: #ec835a;  --critical: #d03b3b;
+  --shadow: 0 1px 2px rgba(31,31,30,.06), 0 8px 24px rgba(31,31,30,.05);
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #101012;  --surface: #18181c;  --surface-2: #212127;
+  --border: #2d2d35;  --grid: #26262d;
+  --ink: #ededea;  --ink-2: #a8a8a1;  --muted: #75756f;
+  --accent: #8397ff;  --accent-soft: #1c2140;
+  --good: #0ca30c;  --warning: #fab219;  --serious: #ec835a;  --critical: #d03b3b;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 20px 20px 64px; }
+
+/* ------------------------------- sign in ------------------------------- */
+#gate {
+  position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
+  background: var(--bg); padding: 20px;
+}
+#gate form {
+  width: 100%; max-width: 340px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 16px; padding: 26px;
+  box-shadow: var(--shadow);
+}
+#gate h1 { font-size: 1.05rem; margin: 0 0 4px; }
+#gate p { font-size: .82rem; color: var(--muted); margin: 0 0 18px; }
+#gate input {
+  width: 100%; font: inherit; font-size: .9rem; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg); color: var(--ink);
+}
+#gate input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+#gate button {
+  width: 100%; margin-top: 10px; font: inherit; font-size: .9rem; font-weight: 600;
+  padding: 10px; border: none; border-radius: 10px;
+  background: var(--accent); color: #fff; cursor: pointer;
+}
+#gate button:disabled { opacity: .55; cursor: default; }
+.err { color: var(--critical); font-size: .8rem; margin-top: 10px; min-height: 1em; }
+
+/* -------------------------------- chrome -------------------------------- */
+header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+header h1 { font-size: 1rem; font-weight: 600; margin: 0; }
+.spacer { flex: 1; }
+.range { display: flex; gap: 2px; background: var(--surface-2); padding: 3px; border-radius: 999px; }
+.range button {
+  font: inherit; font-size: .78rem; font-weight: 500; border: none; cursor: pointer;
+  background: transparent; color: var(--ink-2); padding: 5px 12px; border-radius: 999px;
+}
+.range button[aria-pressed='true'] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.ghost {
+  font: inherit; font-size: .78rem; border: 1px solid var(--border); background: var(--surface);
+  color: var(--ink-2); padding: 6px 12px; border-radius: 999px; cursor: pointer;
+}
+.ghost:hover { color: var(--ink); }
+
+/* --------------------------------- cards -------------------------------- */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px; box-shadow: var(--shadow);
+}
+.card h2 {
+  font-size: .78rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 2px;
+}
+.card .sub { font-size: .76rem; color: var(--muted); margin: 0 0 16px; }
+.grid { display: grid; gap: 14px; }
+@media (min-width: 760px) { .cols-2 { grid-template-columns: 1fr 1fr; } }
+
+/* KPI: hero figure once, supporting tiles beside it. Proportional figures on
+   the big numbers; tabular only where digits must line up in columns. */
+.kpis { display: grid; gap: 14px; grid-template-columns: repeat(2, 1fr); margin-bottom: 14px; }
+@media (min-width: 760px) { .kpis { grid-template-columns: 1.5fr 1fr 1fr 1fr; } }
+.kpi .label { font-size: .76rem; color: var(--muted); }
+.kpi .value { font-size: 1.9rem; font-weight: 600; line-height: 1.1; margin-top: 6px; }
+.kpi.hero .value { font-size: 3rem; }
+.kpi .foot { font-size: .74rem; color: var(--muted); margin-top: 4px; }
+
+/* ------------------------------- outcomes ------------------------------- */
+.rows { display: flex; flex-direction: column; gap: 11px; }
+.row-item { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: baseline; }
+.row-item .name { font-size: .84rem; display: flex; align-items: center; gap: 7px; }
+.row-item .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.row-item .n { font-size: .84rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.track { grid-column: 1 / -1; height: 7px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.track i { display: block; height: 100%; border-radius: 4px; }
+
+/* -------------------------------- tables -------------------------------- */
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+.tabs button {
+  font: inherit; font-size: .8rem; font-weight: 500; border: none; cursor: pointer;
+  background: transparent; color: var(--muted); padding: 5px 10px; border-radius: 8px;
+}
+.tabs button[aria-pressed='true'] { background: var(--accent-soft); color: var(--accent); }
+table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+th {
+  text-align: left; font-weight: 600; font-size: .72rem; text-transform: uppercase;
+  letter-spacing: .04em; color: var(--muted); padding: 0 10px 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+td.when, td.num { white-space: nowrap; color: var(--muted); font-variant-numeric: tabular-nums; }
+.scroll { overflow-x: auto; }
+.pill {
+  display: inline-block; font-size: .68rem; font-weight: 600; padding: 2px 8px;
+  border-radius: 999px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap;
+}
+.empty { color: var(--muted); font-size: .84rem; padding: 26px 0; text-align: center; }
+
+/* -------------------------------- charts -------------------------------- */
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+.tick { fill: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+.gridline { stroke: var(--grid); stroke-width: 1; }
+.bar { fill: var(--accent); }
+.bar-hit { fill: transparent; cursor: default; }
+.bar-label { fill: var(--ink-2); font-size: 10px; font-variant-numeric: tabular-nums; }
+.cat { fill: var(--ink); font-size: 11px; }
+#tip {
+  position: fixed; z-index: 40; pointer-events: none; opacity: 0;
+  transition: opacity .12s; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--border); border-radius: 9px; padding: 7px 10px;
+  font-size: .76rem; box-shadow: var(--shadow); white-space: nowrap;
+}
+#tip.on { opacity: 1; }
+#tip .t-val { font-weight: 600; }
+#tip .t-lab { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <form id="login">
+    <h1>Admin</h1>
+    <p>AI for Founders</p>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="Password" required>
+    <button id="go" type="submit">Sign in</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <header>
+    <h1>Usage</h1>
+    <span class="spacer"></span>
+    <div class="range" id="range">
+      <button data-days="1">24h</button>
+      <button data-days="7" aria-pressed="true">7d</button>
+      <button data-days="30">30d</button>
+      <button data-days="90">90d</button>
+    </div>
+    <button class="ghost" id="theme">Theme</button>
+    <button class="ghost" id="out">Sign out</button>
+  </header>
+
+  <div id="body"></div>
+</div>
+
+<div id="tip"></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const tip = $('#tip');
+let DAYS = 7, TAB = 'recent', DATA = null;
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const compact = (n) => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M'
+  : n >= 1e4 ? (n / 1e3).toFixed(1) + 'K' : n.toLocaleString();
+const secs = (ms) => ms == null ? '—' : (ms / 1000).toFixed(1) + 's';
+const pct = (a, b) => b ? Math.round(100 * a / b) + '%' : '—';
+
+// Outcomes are status, not series: each ships with a visible label and count,
+// so the colour is reinforcement and never the only channel.
+const OUTCOME = {
+  ok:           { label: 'Answered',        color: 'var(--good)' },
+  no_hits:      { label: 'Not in the book', color: 'var(--warning)' },
+  disconnected: { label: 'Reader stopped',  color: 'var(--serious)' },
+  rate_limited: { label: 'Rate limited',    color: 'var(--serious)' },
+  too_long:     { label: 'Question too long', color: 'var(--serious)' },
+  error:        { label: 'Errored',         color: 'var(--critical)' },
+};
+const outcomeOf = (k) => OUTCOME[k] || { label: k, color: 'var(--muted)' };
+
+function showTip(e, value, label) {
+  tip.innerHTML = `<span class="t-val">${esc(value)}</span> <span class="t-lab">${esc(label)}</span>`;
+  tip.classList.add('on');
+  const r = tip.getBoundingClientRect();
+  tip.style.left = Math.min(Math.max(8, e.clientX - r.width / 2), innerWidth - r.width - 8) + 'px';
+  tip.style.top = Math.max(8, e.clientY - r.height - 12) + 'px';
+}
+const hideTip = () => tip.classList.remove('on');
+
+/* Bar with a 4px rounded data-end and a square baseline — the rounding marks
+   where the value stops, so it never reads as part of the axis. */
+function vBar(x, y, w, h) {
+  const r = Math.min(4, w / 2, h);
+  return `M${x},${y + h}L${x},${y + r}Q${x},${y} ${x + r},${y}`
+       + `L${x + w - r},${y}Q${x + w},${y} ${x + w},${y + r}L${x + w},${y + h}Z`;
+}
+function hBar(x, y, w, h) {
+  const r = Math.min(4, h / 2, w);
+  return `M${x},${y}L${x + w - r},${y}Q${x + w},${y} ${x + w},${y + r}`
+       + `L${x + w},${y + h - r}Q${x + w},${y + h} ${x + w - r},${y + h}L${x},${y + h}Z`;
+}
+
+function trendChart(days) {
+  const W = 760, H = 170, PL = 34, PB = 20, PT = 10;
+  const iw = W - PL, ih = H - PB - PT;
+  const max = Math.max(1, ...days.map((d) => d.n));
+  // Round the axis top to something clean rather than the raw maximum.
+  const step = Math.max(1, Math.ceil(max / 3));
+  const top = step * 3;
+  const band = iw / days.length;
+  const bw = Math.min(24, Math.max(2, band - 4));   // never fills the slot
+  const peak = days.reduce((a, d, i) => d.n > days[a].n ? i : a, 0);
+
+  let s = '';
+  for (let i = 0; i <= 3; i++) {
+    const v = (top / 3) * i, y = PT + ih - (v / top) * ih;
+    s += `<line class="gridline" x1="${PL}" y1="${y}" x2="${W}" y2="${y}"/>`
+       + `<text class="tick" x="${PL - 8}" y="${y + 3}" text-anchor="end">${Math.round(v)}</text>`;
+  }
+  days.forEach((d, i) => {
+    const h = (d.n / top) * ih;
+    const x = PL + band * i + (band - bw) / 2, y = PT + ih - h;
+    if (d.n > 0) s += `<path class="bar" d="${vBar(x, y, bw, h)}"/>`;
+    // Label only the peak — a number on every column goes unread.
+    if (i === peak && d.n > 0) {
+      s += `<text class="bar-label" x="${x + bw / 2}" y="${y - 5}" text-anchor="middle">${d.n}</text>`;
+    }
+    s += `<rect class="bar-hit" x="${PL + band * i}" y="${PT}" width="${band}" height="${ih}"`
+       + ` data-v="${d.n}" data-l="on ${esc(fmtDay(d.day))}"/>`;
+  });
+  const first = days[0], last = days[days.length - 1];
+  s += `<text class="tick" x="${PL}" y="${H - 4}">${esc(fmtDay(first.day))}</text>`
+     + `<text class="tick" x="${W}" y="${H - 4}" text-anchor="end">${esc(fmtDay(last.day))}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Questions per day">${s}</svg>`;
+}
+
+function fmtDay(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(undefined,
+    { month: 'short', day: 'numeric', timeZone: 'UTC' });
+}
+
+/* Chapters: magnitude across long-named categories, so horizontal bars in one
+   hue. Length carries the value; colour carries nothing, which is why one hue
+   is correct here rather than a palette. */
+function chapterChart(rows) {
+  if (!rows.length) return '<div class="empty">No questions yet</div>';
+  const RH = 30, LW = 250, W = 760, H = rows.length * RH;
+  const max = Math.max(...rows.map((r) => r.n));
+  const iw = W - LW - 44;
+  let s = '';
+  rows.forEach((r, i) => {
+    const y = i * RH, w = Math.max(2, (r.n / max) * iw), bh = 14;
+    const name = r.chapter.length > 40 ? r.chapter.slice(0, 39) + '…' : r.chapter;
+    s += `<text class="cat" x="0" y="${y + bh + 1}">${esc(name)}</text>`
+       + `<path class="bar" d="${hBar(LW, y + 5, w, bh)}"/>`
+       + `<text class="bar-label" x="${LW + w + 7}" y="${y + bh + 1}">${r.n}</text>`
+       + `<rect class="bar-hit" x="0" y="${y}" width="${W}" height="${RH}"`
+       + ` data-v="${r.n}" data-l="${esc(r.chapter)}"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Chapters readers land on">${s}</svg>`;
+}
+
+function outcomeRows(list, total) {
+  if (!list.length) return '<div class="empty">No questions yet</div>';
+  return '<div class="rows">' + list.map((o) => {
+    const m = outcomeOf(o.outcome);
+    return `<div class="row-item">
+      <span class="name"><span class="dot" style="background:${m.color}"></span>${esc(m.label)}</span>
+      <span class="n">${o.n} · ${pct(o.n, total)}</span>
+      <span class="track"><i style="width:${total ? (100 * o.n / total) : 0}%;background:${m.color}"></i></span>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+function tables(d) {
+  const rows = TAB === 'recent' ? d.recent : d.misses;
+  let inner;
+  if (!rows.length) {
+    inner = `<div class="empty">${TAB === 'recent'
+      ? 'No questions in this window'
+      : 'Nothing — every question found something close'}</div>`;
+  } else if (TAB === 'recent') {
+    inner = `<div class="scroll"><table><thead><tr>
+      <th>When</th><th>Question</th><th>Outcome</th><th>First token</th>
+      </tr></thead><tbody>` + rows.map((r) => `<tr>
+        <td class="when">${esc(r.when)}</td>
+        <td>${esc(r.question)}${r.turn > 1 ? ` <span class="pill">follow-up</span>` : ''}</td>
+        <td><span class="pill">${esc(outcomeOf(r.outcome).label)}</span></td>
+        <td class="num">${secs(r.ttft_ms)}</td>
+      </tr>`).join('') + '</tbody></table></div>';
+  } else {
+    inner = `<div class="scroll"><table><thead><tr>
+      <th>When</th><th>Question the book struggled with</th><th>Closest passage</th>
+      </tr></thead><tbody>` + rows.map((r) => `<tr>
+        <td class="when">${esc(r.when)}</td>
+        <td>${esc(r.question)}</td>
+        <td class="num">${r.distance == null ? 'nothing found' : 'distance ' + r.distance.toFixed(3)}</td>
+      </tr>`).join('') + '</tbody></table></div>';
+  }
+  return `<div class="card">
+    <div class="tabs">
+      <button data-tab="recent" aria-pressed="${TAB === 'recent'}">Recent questions</button>
+      <button data-tab="misses" aria-pressed="${TAB === 'misses'}">Gaps (${d.misses.length})</button>
+    </div>
+    ${TAB === 'misses' ? '<p class="sub">Questions that found nothing, or whose closest passage was still far away. This is the most useful list here — it is what readers wanted that the book does not cover.</p>' : ''}
+    ${inner}</div>`;
+}
+
+function render(d) {
+  const label = d.days === 1 ? 'last 24 hours' : `last ${d.days} days`;
+  $('#body').innerHTML = `
+    <div class="kpis">
+      <div class="card kpi hero">
+        <div class="label">Questions asked</div>
+        <div class="value">${compact(d.total)}</div>
+        <div class="foot">${label} · ${(d.total / d.days).toFixed(1)} per day</div>
+      </div>
+      <div class="card kpi">
+        <div class="label">Readers</div>
+        <div class="value">${compact(d.readers)}</div>
+        <div class="foot">${d.readers ? (d.total / d.readers).toFixed(1) : '0'} questions each</div>
+      </div>
+      <div class="card kpi">
+        <div class="label">Answered</div>
+        <div class="value">${pct(d.answered, d.total)}</div>
+        <div class="foot">${d.followups} were follow-ups</div>
+      </div>
+      <div class="card kpi">
+        <div class="label">First token</div>
+        <div class="value">${secs(d.ttft_p50)}</div>
+        <div class="foot">p95 ${secs(d.ttft_p95)} · answer ${secs(d.total_p50)}</div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-bottom:14px">
+      <div class="card">
+        <h2>Questions per day</h2>
+        <p class="sub">${label}</p>
+        ${d.by_day.length ? trendChart(d.by_day) : '<div class="empty">No questions yet</div>'}
+      </div>
+    </div>
+
+    <div class="grid cols-2" style="margin-bottom:14px">
+      <div class="card">
+        <h2>What happened</h2>
+        <p class="sub">Every question, by outcome</p>
+        ${outcomeRows(d.outcomes, d.total)}
+      </div>
+      <div class="card">
+        <h2>Chapters readers land on</h2>
+        <p class="sub">Times retrieved for an answer</p>
+        ${chapterChart(d.chapters)}
+      </div>
+    </div>
+
+    ${tables(d)}`;
+
+  $('#body').querySelectorAll('.bar-hit').forEach((el) => {
+    el.addEventListener('mousemove', (e) => showTip(e, el.dataset.v, el.dataset.l));
+    el.addEventListener('mouseleave', hideTip);
+  });
+  $('#body').querySelectorAll('.tabs button').forEach((b) => {
+    b.addEventListener('click', () => { TAB = b.dataset.tab; render(DATA); });
+  });
+}
+
+async function load() {
+  const r = await fetch(`/api/admin/stats?days=${DAYS}`, { credentials: 'same-origin' });
+  if (r.status === 401) return gate(true);
+  DATA = await r.json();
+  render(DATA);
+}
+
+function gate(show) {
+  $('#gate').style.display = show ? 'grid' : 'none';
+  $('#app').hidden = show;
+  if (!show) load();
+}
+
+$('#login').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('#go'), err = $('#loginErr');
+  btn.disabled = true; err.textContent = '';
+  try {
+    const r = await fetch('/api/admin/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin', body: JSON.stringify({ password: $('#pw').value }),
+    });
+    if (r.ok) { $('#pw').value = ''; gate(false); }
+    else err.textContent = (await r.json().catch(() => ({}))).detail || 'Could not sign in.';
+  } catch { err.textContent = 'Network error.'; }
+  btn.disabled = false;
+});
+
+$('#out').addEventListener('click', async () => {
+  await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' });
+  gate(true);
+});
+
+$('#range').addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  DAYS = +b.dataset.days;
+  $('#range').querySelectorAll('button').forEach((x) =>
+    x.setAttribute('aria-pressed', String(x === b)));
+  load();
+});
+
+$('#theme').addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('af-admin-theme', next); } catch {}
+});
+
+fetch('/api/admin/session', { credentials: 'same-origin' })
+  .then((r) => r.json())
+  .then((s) => gate(!s.signed_in))
+  .catch(() => gate(true));
+</script>
+</body>
+</html>

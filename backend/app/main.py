@@ -18,6 +18,7 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
+from .admin import Admin, build_router
 from .config import settings
 from .limits import Limiter
 from .rag import Engine, citations
@@ -34,6 +35,11 @@ recorder = Recorder(
     engine.pool,
     salt=settings.usage_salt or settings.database_url,
     enabled=settings.usage_enabled,
+)
+admin = Admin(
+    engine.pool,
+    password=settings.admin_password,
+    secret=settings.database_url,
 )
 
 
@@ -188,6 +194,18 @@ async def health() -> dict[str, object]:
         "top_k": settings.top_k,
         **limiter.stats(),
     }
+
+
+# --- admin dashboard -------------------------------------------------------
+# Registered before the static mount so /admin resolves here rather than being
+# swallowed by the SPA. Every route 404s when ADMIN_PASSWORD is unset.
+
+app.include_router(build_router(admin, client_ip))
+
+if admin.enabled:
+    log.info("admin dashboard at /admin")
+else:
+    log.info("no ADMIN_PASSWORD set — admin dashboard disabled")
 
 
 # --- static frontend -------------------------------------------------------

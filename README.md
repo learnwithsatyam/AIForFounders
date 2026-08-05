@@ -72,6 +72,20 @@ python scripts/usage.py --misses        # what the book could not answer
 nothing, and near-misses where the closest passage was still far away — a
 table of contents for whatever you write next.
 
+### Dashboard
+
+The same data with charts, at `/admin`, served by the app itself:
+
+```bash
+fly secrets set ADMIN_PASSWORD='…'
+```
+
+**With no `ADMIN_PASSWORD` set, every admin route returns 404** — no dashboard
+at all, rather than one behind a default password. Sign-in is a signed session
+cookie (HttpOnly, Secure, SameSite=strict) carrying only an expiry and its
+HMAC; the password is folded into the signing secret, so changing it
+invalidates every live session. Failed logins are throttled per IP.
+
 The table is created at startup and recording can be turned off with
 `USAGE_ENABLED=false`. IP addresses are salted and hashed, never stored raw;
 questions are stored in full, which is what makes `--misses` useful.

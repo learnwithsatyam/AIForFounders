@@ -134,7 +134,23 @@ class Engine:
 
     # --- generation --------------------------------------------------------
 
-    async def condense(self, messages: list[dict[str, str]]) -> str:
+    @staticmethod
+    def _add_tokens(stats: dict | None, resp) -> None:
+        """Accumulate Gemini's own token counts.
+
+        Estimating from characters would be guesswork, and the prompt side
+        dominates here — eight retrieved excerpts per question — so guessing
+        would understate the bill in exactly the direction that hurts.
+        """
+        if stats is None:
+            return
+        um = getattr(resp, "usage_metadata", None)
+        if not um:
+            return
+        stats["prompt_tokens"] = stats.get("prompt_tokens", 0) + (um.prompt_token_count or 0)
+        stats["output_tokens"] = stats.get("output_tokens", 0) + (um.candidates_token_count or 0)
+
+    async def condense(self, messages: list[dict[str, str]], stats: dict | None = None) -> str:
         """Turn a follow-up into a standalone question.
 
         "what about moats?" then "how long do they last?" — the second question
@@ -156,6 +172,7 @@ class Engine:
                 temperature=0.0, max_output_tokens=120
             ),
         )
+        self._add_tokens(stats, resp)
         rewritten = (resp.text or "").strip()
         return rewritten or question
 
@@ -178,7 +195,7 @@ class Engine:
         return "\n".join(parts)
 
     async def answer(
-        self, hits: list[Hit], messages: list[dict[str, str]]
+        self, hits: list[Hit], messages: list[dict[str, str]], stats: dict | None = None
     ) -> AsyncIterator[str]:
         system = SYSTEM.format(
             chapters="\n".join(f"- {c}" for c in self.chapters) or "- (unavailable)"
@@ -193,6 +210,13 @@ class Engine:
         async for chunk in stream:
             if chunk.text:
                 yield chunk.text
+            # Gemini reports usage on the final chunks of a stream, and repeats
+            # a running total rather than a delta — so take the last one seen
+            # instead of summing, or a long answer counts itself many times.
+            um = getattr(chunk, "usage_metadata", None)
+            if um and stats is not None:
+                stats["answer_prompt_tokens"] = um.prompt_token_count or 0
+                stats["answer_output_tokens"] = um.candidates_token_count or 0
 
 
 def citations(hits: list[Hit], limit: int = 4) -> list[dict[str, str]]:

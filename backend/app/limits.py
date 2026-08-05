@@ -1,65 +1,155 @@
-"""Rate limiting, deliberately the simplest thing that bounds the bill.
+"""Rate limiting, in Postgres so it survives a restart.
 
-In-memory and per-process. That means limits reset when you redeploy, and if
-you ever run more than one worker each gets its own counters. For a link you
-send to testers that is fine, and it costs you no Redis. When it stops being
-fine, replace check() with the same logic backed by Redis and nothing else in
-the app changes.
+This is the thing standing between a public link and an unbounded Gemini bill,
+so it cannot live in process memory. The previous version did, which meant
+every deploy silently reset the daily cap to zero — the guard was strongest
+right up until you shipped, and then gone.
+
+The mechanism is one atomic upsert per check:
+
+    INSERT … ON CONFLICT DO UPDATE SET n = n + 1 RETURNING n
+
+Postgres does the increment and returns the post-increment value in a single
+statement, so two concurrent requests can never both read "9" and both proceed.
+Counting is per fixed window (an hour, a day) rather than sliding. That allows
+a burst across a boundary — ten questions at 10:59 and ten more at 11:00 —
+which is the accepted cost of an atomic counter that needs no locks.
+
+Refused requests still increment. That is deliberate: hammering the endpoint
+should not be free, and the window expiring is what clears it, not restraint.
 """
 
 from __future__ import annotations
 
-import time
-from collections import defaultdict, deque
-from dataclasses import dataclass, field
+import hashlib
+import logging
 
-HOUR = 3600.0
-DAY = 86400.0
+from psycopg_pool import AsyncConnectionPool
+
+log = logging.getLogger("aiforfounders")
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS rate_buckets (
+    scope   text        NOT NULL,
+    bucket  timestamptz NOT NULL,
+    n       integer     NOT NULL DEFAULT 0,
+    PRIMARY KEY (scope, bucket)
+);
+CREATE INDEX IF NOT EXISTS rate_buckets_bucket_idx ON rate_buckets (bucket);
+"""
+
+BUMP = """
+INSERT INTO rate_buckets (scope, bucket, n)
+VALUES (%s, date_trunc(%s, now()), 1)
+ON CONFLICT (scope, bucket) DO UPDATE SET n = rate_buckets.n + 1
+RETURNING n;
+"""
+
+# Buckets are only read inside their own window; anything older is dead weight.
+SWEEP = "DELETE FROM rate_buckets WHERE bucket < now() - interval '3 days';"
 
 
-@dataclass
+def _scope(prefix: str, ip: str) -> str:
+    # A counter, not a log: this table holds no questions and nothing worth
+    # joining back to a person.
+    return f"{prefix}:" + hashlib.sha256(ip.encode()).hexdigest()[:24]
+
+
 class Limiter:
-    per_hour: int
-    per_day_global: int
+    def __init__(self, pool: AsyncConnectionPool, per_hour: int, per_day_global: int) -> None:
+        self.pool = pool
+        self.per_hour = per_hour
+        self.per_day_global = per_day_global
+        self._checks = 0
 
-    _by_ip: dict[str, deque[float]] = field(default_factory=lambda: defaultdict(deque))
-    _global: deque[float] = field(default_factory=deque)
+    async def ensure_table(self) -> None:
+        async with self.pool.connection() as conn, conn.cursor() as cur:
+            await cur.execute(SCHEMA)
 
-    def _sweep(self, q: deque[float], window: float, now: float) -> None:
-        while q and now - q[0] > window:
-            q.popleft()
+    async def _bump(self, cur, scope: str, unit: str) -> int:
+        await cur.execute(BUMP, (scope, unit))
+        return (await cur.fetchone())[0]
 
-    def check(self, ip: str) -> str | None:
-        """Return None if allowed, or a message explaining the refusal."""
-        now = time.monotonic()
+    async def check(self, ip: str) -> str | None:
+        """None if allowed, else the message explaining the refusal.
 
-        self._sweep(self._global, DAY, now)
-        if len(self._global) >= self.per_day_global:
-            return (
-                "This demo has hit its daily question limit. "
-                "Please try again tomorrow."
-            )
+        Fails closed. If the count cannot be read there is no way to know what
+        has already been spent, and answering costs money — the condense step
+        calls Gemini before anything else has a chance to fail.
+        """
+        try:
+            async with self.pool.connection() as conn, conn.cursor() as cur:
+                today = await self._bump(cur, "global", "day")
+                if today > self.per_day_global:
+                    return ("This demo has hit its daily question limit. "
+                            "Please try again tomorrow.")
 
-        q = self._by_ip[ip]
-        self._sweep(q, HOUR, now)
-        if len(q) >= self.per_hour:
-            wait = int((HOUR - (now - q[0])) / 60) + 1
-            return (
-                f"You have reached {self.per_hour} questions this hour. "
-                f"Please try again in about {wait} minutes."
-            )
+                mine = await self._bump(cur, _scope("ip", ip), "hour")
+                if mine > self.per_hour:
+                    return (f"You have reached {self.per_hour} questions this hour. "
+                            "Please try again shortly.")
 
-        q.append(now)
-        self._global.append(now)
+                # Housekeeping amortised over requests rather than a cron job.
+                self._checks += 1
+                if self._checks % 500 == 0:
+                    await cur.execute(SWEEP)
+                return None
+        except Exception:
+            log.exception("rate limiter unavailable — refusing rather than spending")
+            return "Temporarily unavailable. Please try again in a moment."
 
-        # Keep the dict from growing without bound on a long-running process.
-        if len(self._by_ip) > 10_000:
-            for k in [k for k, v in self._by_ip.items() if not v]:
-                del self._by_ip[k]
+    async def stats(self) -> dict[str, int]:
+        try:
+            async with self.pool.connection() as conn, conn.cursor() as cur:
+                await cur.execute(
+                    "SELECT n FROM rate_buckets "
+                    "WHERE scope = 'global' AND bucket = date_trunc('day', now());"
+                )
+                row = await cur.fetchone()
+                await cur.execute(
+                    "SELECT count(*) FROM rate_buckets "
+                    "WHERE scope LIKE 'ip:%%' AND bucket > now() - interval '1 hour';"
+                )
+                ips = (await cur.fetchone())[0]
+                return {"questions_today": row[0] if row else 0, "tracked_ips": ips}
+        except Exception:
+            log.exception("rate limiter stats failed")
+            return {"questions_today": -1, "tracked_ips": -1}
 
-        return None
 
-    def stats(self) -> dict[str, int]:
-        now = time.monotonic()
-        self._sweep(self._global, DAY, now)
-        return {"questions_today": len(self._global), "tracked_ips": len(self._by_ip)}
+class LoginThrottle:
+    """Same table, same reasoning: a brute-force guard that forgets on restart
+    is one `fly deploy` away from useless."""
+
+    def __init__(self, pool: AsyncConnectionPool, max_tries: int) -> None:
+        self.pool = pool
+        self.max_tries = max_tries
+
+    async def record_failure(self, ip: str) -> None:
+        try:
+            async with self.pool.connection() as conn, conn.cursor() as cur:
+                await cur.execute(BUMP, (_scope("login", ip), "hour"))
+        except Exception:
+            log.exception("could not record failed login")
+
+    async def throttled(self, ip: str) -> bool:
+        try:
+            async with self.pool.connection() as conn, conn.cursor() as cur:
+                await cur.execute(
+                    "SELECT coalesce(sum(n), 0) FROM rate_buckets "
+                    "WHERE scope = %s AND bucket > now() - interval '1 hour';",
+                    (_scope("login", ip),),
+                )
+                return (await cur.fetchone())[0] >= self.max_tries
+        except Exception:
+            # Fail closed: unable to count attempts is unable to bound them.
+            log.exception("login throttle unavailable — refusing")
+            return True
+
+    async def clear(self, ip: str) -> None:
+        try:
+            async with self.pool.connection() as conn, conn.cursor() as cur:
+                await cur.execute("DELETE FROM rate_buckets WHERE scope = %s;",
+                                  (_scope("login", ip),))
+        except Exception:
+            log.exception("could not clear login attempts")

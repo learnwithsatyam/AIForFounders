@@ -23,8 +23,10 @@ from pathlib import Path
 
 import psycopg
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from embed_and_store import Settings  # noqa: E402
+# The app's Settings, not the loader's: the loader knows nothing about pricing,
+# so importing it here would silently report every configured price as zero.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from app.config import Settings  # noqa: E402
 
 
 def bar(n: int, top: int, width: int = 28) -> str:
@@ -88,6 +90,41 @@ def summary(cur, days: int) -> None:
         print("\n  speed")
         print(f"    time to first token   p50 {ttft50 / 1000:.1f}s   p95 {ttft95 / 1000:.1f}s")
         print(f"    full answer           p50 {total50 / 1000:.1f}s   ~{chars} chars")
+
+        # Where that wait actually goes — the reason to record the split.
+        cur.execute(
+            """SELECT percentile_disc(0.5) WITHIN GROUP (ORDER BY condense_ms),
+                      percentile_disc(0.5) WITHIN GROUP (ORDER BY retrieve_ms)
+               FROM usage WHERE ts > now() - make_interval(days => %s)
+                 AND ttft_ms IS NOT NULL;""",
+            (days,),
+        )
+        cond, retr = cur.fetchone()
+        if retr is not None:
+            cond = cond or 0
+            gem = max(0, ttft50 - cond - retr)
+            print(f"      rewriting question  {cond / 1000:5.1f}s")
+            print(f"      vector search       {retr / 1000:5.1f}s")
+            print(f"      gemini writing      {gem / 1000:5.1f}s  ({gem / ttft50:.0%} of the wait)")
+
+    cur.execute(
+        """SELECT coalesce(sum(prompt_tokens), 0), coalesce(sum(output_tokens), 0),
+                  count(*) FILTER (WHERE prompt_tokens IS NOT NULL)
+           FROM usage WHERE ts > now() - make_interval(days => %s);""",
+        (days,),
+    )
+    tok_in, tok_out, priced = cur.fetchone()
+    if priced:
+        s = Settings()  # type: ignore[call-arg]
+        pin, pout = s.price_in_per_mtok, s.price_out_per_mtok
+        print("\n  tokens")
+        print(f"    prompt  {tok_in:>9,}   ({tok_in // max(priced, 1):,} per question)")
+        print(f"    output  {tok_out:>9,}")
+        if pin or pout:
+            cost = tok_in / 1e6 * pin + tok_out / 1e6 * pout
+            print(f"    cost    ${cost:>8.2f}   (${cost / max(priced, 1):.4f} per question)")
+        else:
+            print("    set PRICE_IN_PER_MTOK / PRICE_OUT_PER_MTOK to see cost")
 
     cur.execute(
         """

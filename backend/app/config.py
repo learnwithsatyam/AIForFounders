@@ -56,6 +56,14 @@ class Settings(LoaderSettings):
     # `fly secrets set ADMIN_PASSWORD='…'`.
     admin_password: str = ""
 
+    # Gemini pricing, in dollars per million tokens, for turning recorded token
+    # counts into a spend figure. Left at zero the dashboard shows tokens only
+    # and no money — deliberately, because a hardcoded price that has since
+    # changed is worse than no number at all. Set these from the current rates
+    # at https://ai.google.dev/gemini-api/docs/pricing
+    price_in_per_mtok: float = Field(default=0.0, ge=0)
+    price_out_per_mtok: float = Field(default=0.0, ge=0)
+
     # Built frontend, served so the UI and API share one origin.
     frontend_dist: Path = Path("../frontend/dist")
 

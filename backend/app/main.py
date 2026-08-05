@@ -29,7 +29,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 
 engine = Engine(settings)
 limiter = Limiter(
-    per_hour=settings.rate_per_hour, per_day_global=settings.rate_per_day
+    engine.pool,
+    per_hour=settings.rate_per_hour,
+    per_day_global=settings.rate_per_day,
 )
 recorder = Recorder(
     engine.pool,
@@ -88,6 +90,7 @@ def client_ip(request: Request) -> str:
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     await engine.start()
     await recorder.ensure_table()
+    await limiter.ensure_table()
     log.info("ready — %d chapters, k=%d", len(engine.chapters), settings.top_k)
     yield
     # Let writes that are still in flight land before the pool closes under them.
@@ -108,6 +111,9 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
 
     async def stream() -> AsyncIterator[str]:
         started = perf_counter()
+        # Declared before the first early return: the finally below reads it on
+        # every path, including a request refused before any model was called.
+        token_stats: dict[str, int] = {}
         try:
             if len(question) > settings.max_question_chars:
                 event.outcome = "too_long"
@@ -117,16 +123,25 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
                 })
                 return
 
-            refusal = limiter.check(event.ip)
+            refusal = await limiter.check(event.ip)
             if refusal:
                 event.outcome = "rate_limited"
                 yield sse({"type": "error", "message": refusal})
                 return
 
+            # Token counts come back through token_stats rather than as return
+            # values, so the streaming signature stays a plain iterator of text.
+            event.model = settings.chat_model
+
             try:
-                standalone = await engine.condense(messages)
+                mark = perf_counter()
+                standalone = await engine.condense(messages, token_stats)
+                event.condense_ms = int((perf_counter() - mark) * 1000)
                 event.standalone = standalone
+
+                mark = perf_counter()
                 hits = await engine.retrieve(standalone)
+                event.retrieve_ms = int((perf_counter() - mark) * 1000)
 
                 if not hits:
                     event.outcome = "no_hits"
@@ -148,7 +163,7 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
                     hits[0].chapter[:28], hits[0].distance,
                 )
 
-                async for text in engine.answer(hits, messages):
+                async for text in engine.answer(hits, messages, token_stats):
                     # The user hit Stop; the client is gone. Stop paying for tokens.
                     if await request.is_disconnected():
                         event.outcome = "disconnected"
@@ -176,6 +191,12 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
             # deliberately synchronous — awaiting here would be unsafe while
             # the generator is being closed, and would delay the response.
             event.total_ms = int((perf_counter() - started) * 1000)
+            # condense reports a running total per call; the answer stream
+            # repeats its own running total, so they add rather than nest.
+            prompt = token_stats.get("prompt_tokens", 0) + token_stats.get("answer_prompt_tokens", 0)
+            output = token_stats.get("output_tokens", 0) + token_stats.get("answer_output_tokens", 0)
+            if prompt or output:
+                event.prompt_tokens, event.output_tokens = prompt, output
             recorder.submit(event)
 
     return StreamingResponse(
@@ -198,7 +219,9 @@ async def health() -> dict[str, object]:
         # from outside the machine.
         "admin_enabled": admin.enabled,
         "usage_enabled": recorder.enabled,
-        **limiter.stats(),
+        # Read from Postgres now, so these survive a deploy instead of
+        # reporting zero every time the machine restarts.
+        **await limiter.stats(),
     }
 
 

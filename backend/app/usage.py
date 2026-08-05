@@ -45,12 +45,21 @@ CREATE TABLE IF NOT EXISTS usage (
     turn          integer
 );
 CREATE INDEX IF NOT EXISTS usage_ts_idx ON usage (ts DESC);
+
+-- Added after the table shipped, so IF NOT EXISTS rather than a rewrite: the
+-- rows already recorded stay, with NULLs where nothing was measured.
+ALTER TABLE usage ADD COLUMN IF NOT EXISTS prompt_tokens integer;
+ALTER TABLE usage ADD COLUMN IF NOT EXISTS output_tokens integer;
+ALTER TABLE usage ADD COLUMN IF NOT EXISTS model         text;
+ALTER TABLE usage ADD COLUMN IF NOT EXISTS condense_ms   integer;
+ALTER TABLE usage ADD COLUMN IF NOT EXISTS retrieve_ms   integer;
 """
 
 INSERT = """
 INSERT INTO usage (ip_hash, question, standalone, chapters, top_distance,
-                   answer_chars, ttft_ms, total_ms, outcome, turn)
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                   answer_chars, ttft_ms, total_ms, outcome, turn,
+                   prompt_tokens, output_tokens, model, condense_ms, retrieve_ms)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 """
 
 
@@ -74,6 +83,19 @@ class Event:
     # reaches the loop that would notice, so defaulting to "ok" silently
     # recorded abandoned questions as successful ones.
     outcome: str = "disconnected"
+
+    # Gemini's own token counts, not an estimate from character counts. The
+    # prompt side dominates — eight excerpts go into every question — so this
+    # is the number that actually explains the bill.
+    prompt_tokens: int | None = None
+    output_tokens: int | None = None
+    model: str | None = None
+
+    # Where the wait goes. Time to first token is the app's weakest number, and
+    # without this split there is no way to know whether it is the condense
+    # call, the vector query, or Gemini itself.
+    condense_ms: int | None = None
+    retrieve_ms: int | None = None
 
 
 class Recorder:
@@ -122,6 +144,11 @@ class Recorder:
                     e.total_ms,
                     e.outcome,
                     e.turn,
+                    e.prompt_tokens,
+                    e.output_tokens,
+                    e.model,
+                    e.condense_ms,
+                    e.retrieve_ms,
                 ))
         except Exception:
             # Deliberately swallowed: the reader already has their answer.

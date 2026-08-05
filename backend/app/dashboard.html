@@ -314,6 +314,29 @@ function outcomeRows(list, total) {
   }).join('') + '</div>';
 }
 
+/* The three phases before a reader sees anything. Shown as labelled rows in
+   one hue rather than a stacked bar: the parts are measured independently and
+   Gemini's share is the remainder, so presenting them as an exact whole would
+   overclaim precision the numbers do not have. */
+function waitBreakdown(d) {
+  if (d.ttft_p50 == null) return '<div class="empty">No answered questions yet</div>';
+  const condense = d.condense_p50 || 0, retrieve = d.retrieve_p50 || 0;
+  const gemini = Math.max(0, d.ttft_p50 - condense - retrieve);
+  const parts = [
+    ['Rewriting the question', condense, 'a Gemini call before retrieval can start'],
+    ['Vector search', retrieve, 'embedding the question, then querying Neon'],
+    ['Gemini writing', gemini, 'until the first token arrives'],
+  ];
+  const max = Math.max(...parts.map((p) => p[1]), 1);
+  return '<div class="rows">' + parts.map(([name, ms, why]) => `
+    <div class="row-item">
+      <span class="name">${esc(name)}</span>
+      <span class="n">${secs(ms)} · ${Math.round(100 * ms / d.ttft_p50)}%</span>
+      <span class="track"><i style="width:${100 * ms / max}%;background:var(--accent)"></i></span>
+      <span style="grid-column:1/-1;font-size:.72rem;color:var(--muted)">${esc(why)}</span>
+    </div>`).join('') + '</div>';
+}
+
 function tables(d) {
   const rows = TAB === 'recent' ? d.recent : d.misses;
   let inner;
@@ -368,9 +391,21 @@ function render(d) {
         <div class="foot">${d.followups} were follow-ups</div>
       </div>
       <div class="card kpi">
-        <div class="label">First token</div>
-        <div class="value">${secs(d.ttft_p50)}</div>
-        <div class="foot">p95 ${secs(d.ttft_p95)} · answer ${secs(d.total_p50)}</div>
+        <div class="label">${d.cost_usd == null ? 'Tokens used' : 'Gemini spend'}</div>
+        <div class="value">${d.cost_usd == null
+          ? compact(d.tokens_in + d.tokens_out)
+          : '$' + d.cost_usd.toFixed(2)}</div>
+        <div class="foot">${d.cost_usd == null
+          ? 'set PRICE_IN_PER_MTOK to see cost'
+          : `${compact(d.tokens_in)} in · ${compact(d.tokens_out)} out`}</div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-bottom:14px">
+      <div class="card">
+        <h2>Where the wait goes</h2>
+        <p class="sub">Median split of the ${secs(d.ttft_p50)} before the first word appears</p>
+        ${waitBreakdown(d)}
       </div>
     </div>
 

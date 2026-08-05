@@ -20,7 +20,6 @@ import hashlib
 import hmac
 import logging
 import time
-from collections import defaultdict, deque
 from pathlib import Path
 
 from fastapi import APIRouter, Cookie, HTTPException, Request, Response
@@ -28,12 +27,13 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel
 from psycopg_pool import AsyncConnectionPool
 
+from .limits import LoginThrottle
+
 log = logging.getLogger("aiforfounders")
 
 COOKIE = "af_admin"
 SESSION_HOURS = 12
-LOGIN_MAX_TRIES = 8          # per IP, per window
-LOGIN_WINDOW = 900.0         # 15 minutes
+LOGIN_MAX_TRIES = 8          # per IP, per hourly bucket
 DASHBOARD = Path(__file__).resolve().parent / "dashboard.html"
 
 
@@ -48,7 +48,9 @@ class Admin:
         # Folding the password into the session secret means changing the
         # password invalidates every existing session, for free.
         self._secret = hashlib.sha256((secret + password).encode()).digest()
-        self._tries: dict[str, deque[float]] = defaultdict(deque)
+        # Failed attempts live in Postgres, not memory: a brute-force guard
+        # that forgets on restart is one deploy away from useless.
+        self.throttle = LoginThrottle(pool, LOGIN_MAX_TRIES)
 
     @property
     def enabled(self) -> bool:
@@ -76,20 +78,13 @@ class Admin:
 
     # --- login ------------------------------------------------------------
 
-    def throttled(self, ip: str) -> bool:
-        now = time.monotonic()
-        q = self._tries[ip]
-        while q and now - q[0] > LOGIN_WINDOW:
-            q.popleft()
-        return len(q) >= LOGIN_MAX_TRIES
-
-    def check_password(self, ip: str, attempt: str) -> bool:
+    async def check_password(self, ip: str, attempt: str) -> bool:
         # compare_digest, not ==: a short-circuiting comparison leaks how much
         # of the password was right through how long the response took.
         if hmac.compare_digest(attempt, self._password):
-            self._tries.pop(ip, None)
+            await self.throttle.clear(ip)
             return True
-        self._tries[ip].append(time.monotonic())
+        await self.throttle.record_failure(ip)
         return False
 
 
@@ -131,11 +126,11 @@ def build_router(admin: Admin, client_ip) -> APIRouter:
             raise HTTPException(status_code=400, detail="Bad request.") from None
 
         ip = client_ip(request)
-        if admin.throttled(ip):
+        if await admin.throttle.throttled(ip):
             log.warning("admin login throttled for %s", ip[:16])
-            raise HTTPException(status_code=429, detail="Too many attempts. Wait 15 minutes.")
+            raise HTTPException(status_code=429, detail="Too many attempts. Try again later.")
 
-        if not admin.check_password(ip, body.password):
+        if not await admin.check_password(ip, body.password):
             log.warning("failed admin login from %s", ip[:16])
             raise HTTPException(status_code=401, detail="Wrong password.")
 
@@ -200,6 +195,18 @@ async def collect(cur, days: int) -> dict:
     )
     outcomes = [{"outcome": o, "n": n} for o, n in await cur.fetchall()]
 
+    # Tokens, and where the wait goes. Both are null for rows recorded before
+    # these columns existed, so every aggregate has to tolerate NULL.
+    await cur.execute(
+        f"""SELECT coalesce(sum(prompt_tokens), 0), coalesce(sum(output_tokens), 0),
+                   count(*) FILTER (WHERE prompt_tokens IS NOT NULL),
+                   percentile_disc(0.5) WITHIN GROUP (ORDER BY condense_ms),
+                   percentile_disc(0.5) WITHIN GROUP (ORDER BY retrieve_ms)
+            FROM usage WHERE {window};""",
+        (days,),
+    )
+    tok_in, tok_out, priced_rows, condense50, retrieve50 = await cur.fetchone()
+
     # generate_series so quiet days are zeroes rather than gaps — a missing day
     # would otherwise read as a shorter axis instead of no traffic.
     await cur.execute(
@@ -247,10 +254,25 @@ async def collect(cur, days: int) -> dict:
         for w, q, o, d in await cur.fetchall()
     ]
 
+    # Cost is only reported when prices are configured. An invented rate would
+    # look authoritative and be wrong.
+    from .config import settings as _s
+    priced = _s.price_in_per_mtok > 0 or _s.price_out_per_mtok > 0
+    cost = (
+        (tok_in / 1e6) * _s.price_in_per_mtok + (tok_out / 1e6) * _s.price_out_per_mtok
+        if priced else None
+    )
+
     return {
         "days": days,
         "total": total,
         "readers": readers,
+        "tokens_in": tok_in,
+        "tokens_out": tok_out,
+        "priced_rows": priced_rows,
+        "cost_usd": cost,
+        "condense_p50": condense50,
+        "retrieve_p50": retrieve50,
         "followups": followups,
         "answered": answered,
         "ttft_p50": ttft50,

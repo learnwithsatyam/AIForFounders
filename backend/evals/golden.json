@@ -1,0 +1,2388 @@
+{
+  "k": 8,
+  "embed_model": "gemini-embedding-2",
+  "embed_dim": 1536,
+  "recap_penalty": 0.02,
+  "cases": {
+    "Is AI actually real or is this just hype?": {
+      "chunks": [
+        {
+          "id": 9,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "Real, or just hype?",
+          "distance": 0.2311
+        },
+        {
+          "id": 14,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "The technology really does work",
+          "distance": 0.2367
+        },
+        {
+          "id": 10,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "Yes, there's a bubble. That doesn't make AI fake.",
+          "distance": 0.2419
+        },
+        {
+          "id": 16,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "A cool demo is not a business",
+          "distance": 0.2726
+        },
+        {
+          "id": 35,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "The promise is real, and narrower than they told you",
+          "distance": 0.2871
+        },
+        {
+          "id": 15,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "My proof: a real product in three weeks",
+          "distance": 0.2925
+        },
+        {
+          "id": 235,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "No, that doesn't mean AI is fake",
+          "distance": 0.3055
+        },
+        {
+          "id": 18,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "And yet, most projects fail",
+          "distance": 0.309
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "Real, or just hype?"
+        },
+        {
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "The technology really does work"
+        },
+        {
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "Yes, there's a bubble. That doesn't make AI fake."
+        },
+        {
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "A cool demo is not a business"
+        }
+      ]
+    },
+    "Everyone keeps saying we are in an AI bubble. Are we?": {
+      "chunks": [
+        {
+          "id": 10,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "Yes, there's a bubble. That doesn't make AI fake.",
+          "distance": 0.2118
+        },
+        {
+          "id": 233,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Yes, it's probably a bubble",
+          "distance": 0.2182
+        },
+        {
+          "id": 235,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "No, that doesn't mean AI is fake",
+          "distance": 0.2308
+        },
+        {
+          "id": 234,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The arithmetic that should scare you",
+          "distance": 0.254
+        },
+        {
+          "id": 231,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Opening",
+          "distance": 0.276
+        },
+        {
+          "id": 239,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The Builder.ai cautionary tale",
+          "distance": 0.2785
+        },
+        {
+          "id": 237,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "A bust here looks like 2000, not 2008",
+          "distance": 0.2862
+        },
+        {
+          "id": 9,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "Real, or just hype?",
+          "distance": 0.2874
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "Yes, there's a bubble. That doesn't make AI fake."
+        },
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Yes, it's probably a bubble"
+        },
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "No, that doesn't mean AI is fake"
+        },
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The arithmetic that should scare you"
+        }
+      ]
+    },
+    "My AI costs go up every time I get a new user. Is that normal?": {
+      "chunks": [
+        {
+          "id": 228,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Match the pricing model to the cost shape",
+          "distance": 0.2394
+        },
+        {
+          "id": 12,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "The trap springs when you grow",
+          "distance": 0.2396
+        },
+        {
+          "id": 215,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Trap 3: your real volume is Users times Actions times Retries",
+          "distance": 0.2436
+        },
+        {
+          "id": 207,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Your costs have a heartbeat",
+          "distance": 0.2457
+        },
+        {
+          "id": 209,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Start with the token bill",
+          "distance": 0.2523
+        },
+        {
+          "id": 208,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "The freemium trap, in numbers",
+          "distance": 0.2571
+        },
+        {
+          "id": 13,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "The trap springs when you grow",
+          "distance": 0.2572
+        },
+        {
+          "id": 206,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Opening",
+          "distance": 0.2589
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Match the pricing model to the cost shape"
+        },
+        {
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "The trap springs when you grow"
+        },
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Trap 3: your real volume is Users times Actions times Retries"
+        },
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Your costs have a heartbeat"
+        }
+      ]
+    },
+    "Where does AI actually save time in a small company?": {
+      "chunks": [
+        {
+          "id": 37,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "The numbers, and what they have in common",
+          "distance": 0.2036
+        },
+        {
+          "id": 36,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "The numbers, and what they have in common",
+          "distance": 0.2198
+        },
+        {
+          "id": 55,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Pick the one workflow, pick the one number",
+          "distance": 0.2216
+        },
+        {
+          "id": 40,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "The same disease at company scale",
+          "distance": 0.2404
+        },
+        {
+          "id": 35,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "The promise is real, and narrower than they told you",
+          "distance": 0.2417
+        },
+        {
+          "id": 65,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Where AI saves you time in a nutshell",
+          "distance": 0.2254
+        },
+        {
+          "id": 46,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "The only calculation that matters",
+          "distance": 0.2459
+        },
+        {
+          "id": 62,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Your team is already doing this",
+          "distance": 0.2528
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "The numbers, and what they have in common"
+        },
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Pick the one workflow, pick the one number"
+        },
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "The same disease at company scale"
+        },
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "The promise is real, and narrower than they told you"
+        }
+      ]
+    },
+    "I automated a workflow and somehow I have more work now. Why?": {
+      "chunks": [
+        {
+          "id": 39,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Saved upstream, lost downstream",
+          "distance": 0.2746
+        },
+        {
+          "id": 38,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "AI can make more work, not less",
+          "distance": 0.306
+        },
+        {
+          "id": 57,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "My documentation workflow: fully automated",
+          "distance": 0.3136
+        },
+        {
+          "id": 49,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "More tools, less value",
+          "distance": 0.3329
+        },
+        {
+          "id": 55,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Pick the one workflow, pick the one number",
+          "distance": 0.3354
+        },
+        {
+          "id": 44,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Quality",
+          "distance": 0.3393
+        },
+        {
+          "id": 34,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "You are being sold a feeling",
+          "distance": 0.3395
+        },
+        {
+          "id": 60,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Buy the transformation, not the tool",
+          "distance": 0.3459
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Saved upstream, lost downstream"
+        },
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "AI can make more work, not less"
+        },
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "My documentation workflow: fully automated"
+        },
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "More tools, less value"
+        }
+      ]
+    },
+    "How do I measure whether AI is actually helping my team?": {
+      "chunks": [
+        {
+          "id": 333,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "2. The measurement starter kit (Chapter 2)",
+          "distance": 0.2315
+        },
+        {
+          "id": 44,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Quality",
+          "distance": 0.2393
+        },
+        {
+          "id": 48,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Two last rules",
+          "distance": 0.2428
+        },
+        {
+          "id": 47,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Three more lenses, three more lies they catch",
+          "distance": 0.2438
+        },
+        {
+          "id": 42,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Why this should scare you",
+          "distance": 0.2443
+        },
+        {
+          "id": 46,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "The only calculation that matters",
+          "distance": 0.251
+        },
+        {
+          "id": 43,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Speed",
+          "distance": 0.2574
+        },
+        {
+          "id": 41,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "You can't feel the payoff. You can only measure it.",
+          "distance": 0.258
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "2. The measurement starter kit (Chapter 2)"
+        },
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Quality"
+        },
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Two last rules"
+        },
+        {
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Three more lenses, three more lies they catch"
+        }
+      ]
+    },
+    "Is my product just a wrapper around GPT?": {
+      "chunks": [
+        {
+          "id": 66,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "Opening",
+          "distance": 0.195
+        },
+        {
+          "id": 67,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "Everything Is a Wrapper",
+          "distance": 0.2234
+        },
+        {
+          "id": 71,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Four Ownables",
+          "distance": 0.2429
+        },
+        {
+          "id": 83,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Wrapper Question in a Nutshell",
+          "distance": 0.2279
+        },
+        {
+          "id": 80,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Jasper Test",
+          "distance": 0.2483
+        },
+        {
+          "id": 77,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The thin layer you must own",
+          "distance": 0.2489
+        },
+        {
+          "id": 68,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Day the Model Ate the Wrapper",
+          "distance": 0.2494
+        },
+        {
+          "id": 81,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "What a real answer sounds like",
+          "distance": 0.2601
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "Opening"
+        },
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "Everything Is a Wrapper"
+        },
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Four Ownables"
+        },
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Wrapper Question in a Nutshell"
+        }
+      ]
+    },
+    "What is the Jasper Test?": {
+      "chunks": [
+        {
+          "id": 334,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "3. The Jasper Test (Chapter 3)",
+          "distance": 0.2832
+        },
+        {
+          "id": 80,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Jasper Test",
+          "distance": 0.2925
+        },
+        {
+          "id": 68,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Day the Model Ate the Wrapper",
+          "distance": 0.3347
+        },
+        {
+          "id": 81,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "What a real answer sounds like",
+          "distance": 0.3871
+        },
+        {
+          "id": 187,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "Level one: code-based checks (the cheap, deterministic ones)",
+          "distance": 0.3886
+        },
+        {
+          "id": 99,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Three tests you can run today",
+          "distance": 0.3894
+        },
+        {
+          "id": 186,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "Level one: code-based checks (the cheap, deterministic ones)",
+          "distance": 0.3909
+        },
+        {
+          "id": 159,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Three: You Can't Predict It, Only Measure It",
+          "distance": 0.3965
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "3. The Jasper Test (Chapter 3)"
+        },
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Jasper Test"
+        },
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Day the Model Ate the Wrapper"
+        },
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "What a real answer sounds like"
+        }
+      ]
+    },
+    "What are the four ownables?": {
+      "chunks": [
+        {
+          "id": 335,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "4. The four ownables (Chapters 3 and 4)",
+          "distance": 0.2451
+        },
+        {
+          "id": 71,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Four Ownables",
+          "distance": 0.2742
+        },
+        {
+          "id": 89,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Value wins the sale. Power keeps it.",
+          "distance": 0.3524
+        },
+        {
+          "id": 266,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Do You Own What the AI Made?",
+          "distance": 0.36
+        },
+        {
+          "id": 122,
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "The quarterly fire drill",
+          "distance": 0.3613
+        },
+        {
+          "id": 74,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "\"Can't Anyone Clone This in a Weekend?\"",
+          "distance": 0.3627
+        },
+        {
+          "id": 121,
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "Own the relationship, rent everything else",
+          "distance": 0.364
+        },
+        {
+          "id": 272,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The fix is cheap",
+          "distance": 0.3643
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "4. The four ownables (Chapters 3 and 4)"
+        },
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Four Ownables"
+        },
+        {
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Value wins the sale. Power keeps it."
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Do You Own What the AI Made?"
+        }
+      ]
+    },
+    "How do I build a moat for an AI startup?": {
+      "chunks": [
+        {
+          "id": 72,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "How to get one from zero, with no money",
+          "distance": 0.212
+        },
+        {
+          "id": 96,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "The data moat you probably don't have",
+          "distance": 0.2223
+        },
+        {
+          "id": 85,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "A moat is not a feeling",
+          "distance": 0.2296
+        },
+        {
+          "id": 103,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Without the panic",
+          "distance": 0.2323
+        },
+        {
+          "id": 334,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "3. The Jasper Test (Chapter 3)",
+          "distance": 0.2327
+        },
+        {
+          "id": 98,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "What actually survives the audit",
+          "distance": 0.2444
+        },
+        {
+          "id": 102,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "The moat roadmap, by stage",
+          "distance": 0.2488
+        },
+        {
+          "id": 104,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Moats in a nutshell",
+          "distance": 0.2315
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "How to get one from zero, with no money"
+        },
+        {
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "The data moat you probably don't have"
+        },
+        {
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "A moat is not a feeling"
+        },
+        {
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Without the panic"
+        }
+      ]
+    },
+    "What are the seven powers?": {
+      "chunks": [
+        {
+          "id": 87,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "The seven powers",
+          "distance": 0.3113
+        },
+        {
+          "id": 86,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "The seven powers",
+          "distance": 0.347
+        },
+        {
+          "id": 90,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Moats are stage-gated",
+          "distance": 0.371
+        },
+        {
+          "id": 85,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "A moat is not a feeling",
+          "distance": 0.3838
+        },
+        {
+          "id": 88,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Value wins the sale. Power keeps it.",
+          "distance": 0.3841
+        },
+        {
+          "id": 89,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Value wins the sale. Power keeps it.",
+          "distance": 0.3946
+        },
+        {
+          "id": 162,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Your Four Tools: What Each Does and What It Bills You",
+          "distance": 0.4002
+        },
+        {
+          "id": 104,
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Moats in a nutshell",
+          "distance": 0.3941
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "The seven powers"
+        },
+        {
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Moats are stage-gated"
+        },
+        {
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "A moat is not a feeling"
+        },
+        {
+          "chapter": "Chapter 4: Building a Moat Without the Panic",
+          "section": "Value wins the sale. Power keeps it."
+        }
+      ]
+    },
+    "What happens if OpenAI just ships my feature next week?": {
+      "chunks": [
+        {
+          "id": 107,
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "This is older than AI",
+          "distance": 0.286
+        },
+        {
+          "id": 105,
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "Opening",
+          "distance": 0.3002
+        },
+        {
+          "id": 74,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "\"Can't Anyone Clone This in a Weekend?\"",
+          "distance": 0.3023
+        },
+        {
+          "id": 81,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "What a real answer sounds like",
+          "distance": 0.3143
+        },
+        {
+          "id": 69,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "Bholuma: My Own Micro-Jasper",
+          "distance": 0.3187
+        },
+        {
+          "id": 66,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "Opening",
+          "distance": 0.3217
+        },
+        {
+          "id": 106,
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "Your landlord, not your rival",
+          "distance": 0.3288
+        },
+        {
+          "id": 80,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The Jasper Test",
+          "distance": 0.3371
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "This is older than AI"
+        },
+        {
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "Opening"
+        },
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "\"Can't Anyone Clone This in a Weekend?\""
+        },
+        {
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "What a real answer sounds like"
+        }
+      ]
+    },
+    "I am completely dependent on one model provider. How risky is that?": {
+      "chunks": [
+        {
+          "id": 120,
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "The de-risking toolkit",
+          "distance": 0.2432
+        },
+        {
+          "id": 106,
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "Your landlord, not your rival",
+          "distance": 0.287
+        },
+        {
+          "id": 337,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "6. Surviving the platform you are built on (Chapter 5)",
+          "distance": 0.29
+        },
+        {
+          "id": 276,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The other side of the deal: read your vendor's terms",
+          "distance": 0.2934
+        },
+        {
+          "id": 119,
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "Measure your lease: distance from the model",
+          "distance": 0.2971
+        },
+        {
+          "id": 81,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "What a real answer sounds like",
+          "distance": 0.3038
+        },
+        {
+          "id": 277,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The Fine Print That Protects You (Sometimes)",
+          "distance": 0.3058
+        },
+        {
+          "id": 77,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The thin layer you must own",
+          "distance": 0.3091
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "The de-risking toolkit"
+        },
+        {
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "Your landlord, not your rival"
+        },
+        {
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "6. Surviving the platform you are built on (Chapter 5)"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The other side of the deal: read your vendor's terms"
+        }
+      ]
+    },
+    "Can I build a real product without hiring any engineers?": {
+      "chunks": [
+        {
+          "id": 126,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Yes, you can build it. That part is settled.",
+          "distance": 0.1765
+        },
+        {
+          "id": 141,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Don't worry about scale yet",
+          "distance": 0.2216
+        },
+        {
+          "id": 144,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "When to actually hire an engineer",
+          "distance": 0.2346
+        },
+        {
+          "id": 146,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Building without engineers in a nutshell",
+          "distance": 0.2229
+        },
+        {
+          "id": 145,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Building was never the hard part",
+          "distance": 0.253
+        },
+        {
+          "id": 142,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "The floor, as a short list",
+          "distance": 0.2551
+        },
+        {
+          "id": 131,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Step 3: Decide the workflows. They are the actual product.",
+          "distance": 0.2623
+        },
+        {
+          "id": 125,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Two days to dead",
+          "distance": 0.2626
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Yes, you can build it. That part is settled."
+        },
+        {
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Don't worry about scale yet"
+        },
+        {
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "When to actually hire an engineer"
+        },
+        {
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Building without engineers in a nutshell"
+        }
+      ]
+    },
+    "I am non-technical. Where do I actually start building?": {
+      "chunks": [
+        {
+          "id": 126,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Yes, you can build it. That part is settled.",
+          "distance": 0.2795
+        },
+        {
+          "id": 139,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "If you're not technical at all",
+          "distance": 0.2818
+        },
+        {
+          "id": 140,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "The security floor, spelled out",
+          "distance": 0.2875
+        },
+        {
+          "id": 141,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Don't worry about scale yet",
+          "distance": 0.2928
+        },
+        {
+          "id": 142,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "The floor, as a short list",
+          "distance": 0.297
+        },
+        {
+          "id": 129,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Step 1: Write the plan before you write the prompt",
+          "distance": 0.3083
+        },
+        {
+          "id": 145,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Building was never the hard part",
+          "distance": 0.3131
+        },
+        {
+          "id": 131,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Step 3: Decide the workflows. They are the actual product.",
+          "distance": 0.3209
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Yes, you can build it. That part is settled."
+        },
+        {
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "If you're not technical at all"
+        },
+        {
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "The security floor, spelled out"
+        },
+        {
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Don't worry about scale yet"
+        }
+      ]
+    },
+    "Which model should I pick for my product?": {
+      "chunks": [
+        {
+          "id": 147,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Opening",
+          "distance": 0.2806
+        },
+        {
+          "id": 169,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "The Only Benchmark That Matters Is Yours",
+          "distance": 0.2826
+        },
+        {
+          "id": 173,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Choosing Your Model in a Nutshell",
+          "distance": 0.2701
+        },
+        {
+          "id": 212,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "The biggest lever: which model",
+          "distance": 0.3006
+        },
+        {
+          "id": 77,
+          "chapter": "Chapter 3: Is My Product Just a Wrapper?",
+          "section": "The thin layer you must own",
+          "distance": 0.3017
+        },
+        {
+          "id": 170,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "The Two-Currency Price Tag",
+          "distance": 0.3071
+        },
+        {
+          "id": 171,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Build It to Swap",
+          "distance": 0.3082
+        },
+        {
+          "id": 159,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Three: You Can't Predict It, Only Measure It",
+          "distance": 0.3095
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Opening"
+        },
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "The Only Benchmark That Matters Is Yours"
+        },
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Choosing Your Model in a Nutshell"
+        },
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "The biggest lever: which model"
+        }
+      ]
+    },
+    "Why do language models make things up?": {
+      "chunks": [
+        {
+          "id": 152,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Which Is Also Why It Hallucinates, by Design",
+          "distance": 0.2341
+        },
+        {
+          "id": 177,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "2. It makes things up with total confidence (hallucination)",
+          "distance": 0.3037
+        },
+        {
+          "id": 156,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Why They Keep Paying It",
+          "distance": 0.3216
+        },
+        {
+          "id": 153,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "And It Is, Even to Its Makers, Mostly a Black Box",
+          "distance": 0.3231
+        },
+        {
+          "id": 158,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "One: Its Knowledge Is Frozen and Generic",
+          "distance": 0.3298
+        },
+        {
+          "id": 148,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "First, Understand the Machine",
+          "distance": 0.3409
+        },
+        {
+          "id": 178,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "3. It quietly destroys trust",
+          "distance": 0.3417
+        },
+        {
+          "id": 149,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "A Model Is Really Just Two Files",
+          "distance": 0.3425
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Which Is Also Why It Hallucinates, by Design"
+        },
+        {
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "2. It makes things up with total confidence (hallucination)"
+        },
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Why They Keep Paying It"
+        },
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "And It Is, Even to Its Makers, Mostly a Black Box"
+        }
+      ]
+    },
+    "What actually is a model, under the hood?": {
+      "chunks": [
+        {
+          "id": 149,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "A Model Is Really Just Two Files",
+          "distance": 0.2526
+        },
+        {
+          "id": 153,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "And It Is, Even to Its Makers, Mostly a Black Box",
+          "distance": 0.309
+        },
+        {
+          "id": 148,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "First, Understand the Machine",
+          "distance": 0.3205
+        },
+        {
+          "id": 154,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "How a Model Gets Made, and What Each Step Costs",
+          "distance": 0.3269
+        },
+        {
+          "id": 151,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "All It Fundamentally Does Is Predict the Next Word",
+          "distance": 0.3273
+        },
+        {
+          "id": 150,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Training Is Lossy Compression of the Internet",
+          "distance": 0.3312
+        },
+        {
+          "id": 156,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Why They Keep Paying It",
+          "distance": 0.3434
+        },
+        {
+          "id": 158,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "One: Its Knowledge Is Frozen and Generic",
+          "distance": 0.3502
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "A Model Is Really Just Two Files"
+        },
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "And It Is, Even to Its Makers, Mostly a Black Box"
+        },
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "First, Understand the Machine"
+        },
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "How a Model Gets Made, and What Each Step Costs"
+        }
+      ]
+    },
+    "What is prompt injection and should I worry about it?": {
+      "chunks": [
+        {
+          "id": 160,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Four: It Can't Tell Your Instructions From the Text It Reads",
+          "distance": 0.2275
+        },
+        {
+          "id": 176,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "1. It gets hijacked (prompt injection)",
+          "distance": 0.2394
+        },
+        {
+          "id": 287,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The two edges: leakage and regurgitation",
+          "distance": 0.3381
+        },
+        {
+          "id": 286,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Samsung: the famous casualty",
+          "distance": 0.3381
+        },
+        {
+          "id": 289,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The defenses are within your power",
+          "distance": 0.3435
+        },
+        {
+          "id": 177,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "2. It makes things up with total confidence (hallucination)",
+          "distance": 0.3465
+        },
+        {
+          "id": 345,
+          "chapter": "Glossary",
+          "section": "Opening",
+          "distance": 0.3521
+        },
+        {
+          "id": 268,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The practical case: a prompt isn't authorship",
+          "distance": 0.3542
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "Four: It Can't Tell Your Instructions From the Text It Reads"
+        },
+        {
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "1. It gets hijacked (prompt injection)"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The two edges: leakage and regurgitation"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Samsung: the famous casualty"
+        }
+      ]
+    },
+    "My demo works perfectly but it falls apart with real users. Why?": {
+      "chunks": [
+        {
+          "id": 175,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "The demo-to-production canyon",
+          "distance": 0.2551
+        },
+        {
+          "id": 203,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "My own production reality",
+          "distance": 0.2898
+        },
+        {
+          "id": 174,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "Opening",
+          "distance": 0.2938
+        },
+        {
+          "id": 181,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "Why this is genuinely hard: the three gulfs",
+          "distance": 0.2976
+        },
+        {
+          "id": 196,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "The loop, kept alive",
+          "distance": 0.3321
+        },
+        {
+          "id": 140,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "The security floor, spelled out",
+          "distance": 0.3381
+        },
+        {
+          "id": 180,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "Evals: the most important skill nobody teaches you",
+          "distance": 0.3395
+        },
+        {
+          "id": 200,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "Evaluation-driven, or guessing",
+          "distance": 0.3421
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "The demo-to-production canyon"
+        },
+        {
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "My own production reality"
+        },
+        {
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "Opening"
+        },
+        {
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "Why this is genuinely hard: the three gulfs"
+        }
+      ]
+    },
+    "Could my AI feature get me sued by a customer?": {
+      "chunks": [
+        {
+          "id": 274,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The Air Canada precedent",
+          "distance": 0.2653
+        },
+        {
+          "id": 276,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The other side of the deal: read your vendor's terms",
+          "distance": 0.2682
+        },
+        {
+          "id": 288,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "You are someone's AI-data risk too",
+          "distance": 0.2685
+        },
+        {
+          "id": 265,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Opening",
+          "distance": 0.2713
+        },
+        {
+          "id": 277,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The Fine Print That Protects You (Sometimes)",
+          "distance": 0.2751
+        },
+        {
+          "id": 179,
+          "chapter": "Chapter 8: Shipping AI That Survives Real Users",
+          "section": "4. It makes you legally liable",
+          "distance": 0.2751
+        },
+        {
+          "id": 275,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Three practical consequences",
+          "distance": 0.2766
+        },
+        {
+          "id": 290,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "One last mirror: you hold the logs now",
+          "distance": 0.278
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The Air Canada precedent"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The other side of the deal: read your vendor's terms"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "You are someone's AI-data risk too"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Opening"
+        }
+      ]
+    },
+    "How do I work out what tokens are going to cost me?": {
+      "chunks": [
+        {
+          "id": 339,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "8. The money math (Chapter 9)",
+          "distance": 0.2326
+        },
+        {
+          "id": 209,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Start with the token bill",
+          "distance": 0.2355
+        },
+        {
+          "id": 214,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Trap 2: reasoning models bill you for invisible thinking",
+          "distance": 0.2595
+        },
+        {
+          "id": 212,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "The biggest lever: which model",
+          "distance": 0.2698
+        },
+        {
+          "id": 211,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Now do the one calculation that matters",
+          "distance": 0.2698
+        },
+        {
+          "id": 213,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Trap 1: conversation memory accumulates, fast",
+          "distance": 0.2756
+        },
+        {
+          "id": 222,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "The two-currency lesson, priced",
+          "distance": 0.2758
+        },
+        {
+          "id": 170,
+          "chapter": "Chapter 7: Which AI Should You Use?",
+          "section": "The Two-Currency Price Tag",
+          "distance": 0.2804
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "8. The money math (Chapter 9)"
+        },
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Start with the token bill"
+        },
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Trap 2: reasoning models bill you for invisible thinking"
+        },
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "The biggest lever: which model"
+        }
+      ]
+    },
+    "Is a free tier a trap for an AI product?": {
+      "chunks": [
+        {
+          "id": 208,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "The freemium trap, in numbers",
+          "distance": 0.2018
+        },
+        {
+          "id": 219,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Model 3: an agent product",
+          "distance": 0.2813
+        },
+        {
+          "id": 12,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "The trap springs when you grow",
+          "distance": 0.2957
+        },
+        {
+          "id": 28,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "Don't be the slop",
+          "distance": 0.2981
+        },
+        {
+          "id": 13,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "The trap springs when you grow",
+          "distance": 0.3004
+        },
+        {
+          "id": 33,
+          "chapter": "Chapter 2: Where AI Actually Saves You Time",
+          "section": "Opening",
+          "distance": 0.3078
+        },
+        {
+          "id": 228,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Match the pricing model to the cost shape",
+          "distance": 0.3088
+        },
+        {
+          "id": 107,
+          "chapter": "Chapter 5: Surviving the Platform You're Built On",
+          "section": "This is older than AI",
+          "distance": 0.3218
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "The freemium trap, in numbers"
+        },
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Model 3: an agent product"
+        },
+        {
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "The trap springs when you grow"
+        },
+        {
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "Don't be the slop"
+        }
+      ]
+    },
+    "How should I price this so I do not lose money on every user?": {
+      "chunks": [
+        {
+          "id": 211,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Now do the one calculation that matters",
+          "distance": 0.2316
+        },
+        {
+          "id": 228,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Match the pricing model to the cost shape",
+          "distance": 0.2491
+        },
+        {
+          "id": 217,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Model 1: a RAG support-chat SaaS (sold to businesses)",
+          "distance": 0.2552
+        },
+        {
+          "id": 209,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Start with the token bill",
+          "distance": 0.2605
+        },
+        {
+          "id": 208,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "The freemium trap, in numbers",
+          "distance": 0.2626
+        },
+        {
+          "id": 339,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "8. The money math (Chapter 9)",
+          "distance": 0.2678
+        },
+        {
+          "id": 219,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Model 3: an agent product",
+          "distance": 0.2699
+        },
+        {
+          "id": 218,
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Model 2: an AI image product (this one's close to home)",
+          "distance": 0.2711
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Now do the one calculation that matters"
+        },
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Match the pricing model to the cost shape"
+        },
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Model 1: a RAG support-chat SaaS (sold to businesses)"
+        },
+        {
+          "chapter": "Chapter 9: The Money Math (Cost and Pricing)",
+          "section": "Start with the token bill"
+        }
+      ]
+    },
+    "Should I be raising money right now or waiting?": {
+      "chunks": [
+        {
+          "id": 249,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The test",
+          "distance": 0.2514
+        },
+        {
+          "id": 257,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Step four: run it hot, in parallel, on a clock",
+          "distance": 0.2519
+        },
+        {
+          "id": 262,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "You're not raising from the bubble. You're surviving it.",
+          "distance": 0.2538
+        },
+        {
+          "id": 247,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The cruelty specific to this moment",
+          "distance": 0.2764
+        },
+        {
+          "id": 248,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Do you need to raise at all?",
+          "distance": 0.2774
+        },
+        {
+          "id": 233,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Yes, it's probably a bubble",
+          "distance": 0.2799
+        },
+        {
+          "id": 261,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "How to raise sane in a frothy market",
+          "distance": 0.2862
+        },
+        {
+          "id": 259,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "What happens in the room",
+          "distance": 0.2875
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The test"
+        },
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Step four: run it hot, in parallel, on a clock"
+        },
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "You're not raising from the bubble. You're surviving it."
+        },
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The cruelty specific to this moment"
+        }
+      ]
+    },
+    "What do investors want to hear from an AI startup?": {
+      "chunks": [
+        {
+          "id": 259,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "What happens in the room",
+          "distance": 0.2809
+        },
+        {
+          "id": 240,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Don't brand as AI. Be AI.",
+          "distance": 0.316
+        },
+        {
+          "id": 238,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Do you have to call yourself an \"AI startup\"?",
+          "distance": 0.3164
+        },
+        {
+          "id": 234,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The arithmetic that should scare you",
+          "distance": 0.318
+        },
+        {
+          "id": 22,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "What it looks like in real life",
+          "distance": 0.3185
+        },
+        {
+          "id": 239,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The Builder.ai cautionary tale",
+          "distance": 0.32
+        },
+        {
+          "id": 233,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Yes, it's probably a bubble",
+          "distance": 0.3228
+        },
+        {
+          "id": 16,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "A cool demo is not a business",
+          "distance": 0.323
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "What happens in the room"
+        },
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Don't brand as AI. Be AI."
+        },
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Do you have to call yourself an \"AI startup\"?"
+        },
+        {
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The arithmetic that should scare you"
+        }
+      ]
+    },
+    "Do I own the copyright on something the AI generated?": {
+      "chunks": [
+        {
+          "id": 266,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Do You Own What the AI Made?",
+          "distance": 0.2282
+        },
+        {
+          "id": 271,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Two follow-ups: code and patents",
+          "distance": 0.2388
+        },
+        {
+          "id": 267,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The absolutist case: a machine can't be an author",
+          "distance": 0.2663
+        },
+        {
+          "id": 268,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The practical case: a prompt isn't authorship",
+          "distance": 0.2687
+        },
+        {
+          "id": 265,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Opening",
+          "distance": 0.2707
+        },
+        {
+          "id": 269,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Run your own company through the Zarya split",
+          "distance": 0.271
+        },
+        {
+          "id": 272,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The fix is cheap",
+          "distance": 0.2779
+        },
+        {
+          "id": 277,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The Fine Print That Protects You (Sometimes)",
+          "distance": 0.2811
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Do You Own What the AI Made?"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Two follow-ups: code and patents"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The absolutist case: a machine can't be an author"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The practical case: a prompt isn't authorship"
+        }
+      ]
+    },
+    "Can I use AI output commercially without getting into trouble?": {
+      "chunks": [
+        {
+          "id": 277,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The Fine Print That Protects You (Sometimes)",
+          "distance": 0.2687
+        },
+        {
+          "id": 265,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Opening",
+          "distance": 0.2768
+        },
+        {
+          "id": 269,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Run your own company through the Zarya split",
+          "distance": 0.2773
+        },
+        {
+          "id": 271,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Two follow-ups: code and patents",
+          "distance": 0.2793
+        },
+        {
+          "id": 266,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Do You Own What the AI Made?",
+          "distance": 0.2806
+        },
+        {
+          "id": 278,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The shields, and their shape",
+          "distance": 0.2865
+        },
+        {
+          "id": 270,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Relief: the logo still has a backup protection",
+          "distance": 0.2901
+        },
+        {
+          "id": 264,
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Opening",
+          "distance": 0.2911
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "The Fine Print That Protects You (Sometimes)"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Opening"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Run your own company through the Zarya split"
+        },
+        {
+          "chapter": "Chapter 11: Who Owns It, and Who Gets Sued?",
+          "section": "Two follow-ups: code and patents"
+        }
+      ]
+    },
+    "People search with ChatGPT now instead of Google. How do I get found?": {
+      "chunks": [
+        {
+          "id": 317,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Be the Answer, and Own the Asking",
+          "distance": 0.1944
+        },
+        {
+          "id": 298,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Opening",
+          "distance": 0.2412
+        },
+        {
+          "id": 318,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Getting Found in a Nutshell",
+          "distance": 0.2307
+        },
+        {
+          "id": 303,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "What Actually Gets You Cited",
+          "distance": 0.253
+        },
+        {
+          "id": 305,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "What other people say beats what you say",
+          "distance": 0.2548
+        },
+        {
+          "id": 307,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Your docs are a salesperson",
+          "distance": 0.2554
+        },
+        {
+          "id": 311,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Citation rate: the new KPI",
+          "distance": 0.2622
+        },
+        {
+          "id": 310,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "The Vercel proof",
+          "distance": 0.2647
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Be the Answer, and Own the Asking"
+        },
+        {
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Opening"
+        },
+        {
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Getting Found in a Nutshell"
+        },
+        {
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "What Actually Gets You Cited"
+        }
+      ]
+    },
+    "What is GEO and is it any different from SEO?": {
+      "chunks": [
+        {
+          "id": 302,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "GEO Is Mostly Just SEO in a Costume",
+          "distance": 0.2414
+        },
+        {
+          "id": 342,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "11. Getting found when search changes (Chapter 12)",
+          "distance": 0.3893
+        },
+        {
+          "id": 304,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Show me, don't tell me",
+          "distance": 0.4119
+        },
+        {
+          "id": 308,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "The Flood, and Why It Helps You",
+          "distance": 0.4181
+        },
+        {
+          "id": 300,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Where the buying decision moved",
+          "distance": 0.4215
+        },
+        {
+          "id": 298,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Opening",
+          "distance": 0.4233
+        },
+        {
+          "id": 344,
+          "chapter": "Glossary",
+          "section": "Opening",
+          "distance": 0.4237
+        },
+        {
+          "id": 301,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "The sky isn't falling, it's rearranging",
+          "distance": 0.4244
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "GEO Is Mostly Just SEO in a Costume"
+        },
+        {
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "11. Getting found when search changes (Chapter 12)"
+        },
+        {
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "Show me, don't tell me"
+        },
+        {
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "The Flood, and Why It Helps You"
+        }
+      ]
+    },
+    "Is the one-person unicorn actually realistic?": {
+      "chunks": [
+        {
+          "id": 320,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "The one-person unicorn, examined honestly",
+          "distance": 0.2683
+        },
+        {
+          "id": 141,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Don't worry about scale yet",
+          "distance": 0.3373
+        },
+        {
+          "id": 126,
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Yes, you can build it. That part is settled.",
+          "distance": 0.3508
+        },
+        {
+          "id": 327,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "Do you actually need a co-founder?",
+          "distance": 0.3534
+        },
+        {
+          "id": 248,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "Do you need to raise at all?",
+          "distance": 0.3547
+        },
+        {
+          "id": 239,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "The Builder.ai cautionary tale",
+          "distance": 0.3572
+        },
+        {
+          "id": 331,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "The founder's role in a nutshell",
+          "distance": 0.3382
+        },
+        {
+          "id": 237,
+          "chapter": "Chapter 10: Raising Money in a Bubble",
+          "section": "A bust here looks like 2000, not 2008",
+          "distance": 0.3598
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "The one-person unicorn, examined honestly"
+        },
+        {
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Don't worry about scale yet"
+        },
+        {
+          "chapter": "Chapter 6: Building Without Engineers",
+          "section": "Yes, you can build it. That part is settled."
+        },
+        {
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "Do you actually need a co-founder?"
+        }
+      ]
+    },
+    "If AI does the work, what is left for me to do as a founder?": {
+      "chunks": [
+        {
+          "id": 324,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "\"So what is left for me?\" is the wrong question",
+          "distance": 0.1752
+        },
+        {
+          "id": 326,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "What only you can do",
+          "distance": 0.1872
+        },
+        {
+          "id": 325,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "The bar just went up",
+          "distance": 0.2329
+        },
+        {
+          "id": 319,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "Opening",
+          "distance": 0.2333
+        },
+        {
+          "id": 331,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "The founder's role in a nutshell",
+          "distance": 0.2178
+        },
+        {
+          "id": 328,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "Take care of the founder",
+          "distance": 0.2508
+        },
+        {
+          "id": 323,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "The failures ahead will be human, not technical",
+          "distance": 0.255
+        },
+        {
+          "id": 329,
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "The honest state of you",
+          "distance": 0.2654
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "\"So what is left for me?\" is the wrong question"
+        },
+        {
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "What only you can do"
+        },
+        {
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "The bar just went up"
+        },
+        {
+          "chapter": "Conclusion: The Founder's Role in an AI World",
+          "section": "Opening"
+        }
+      ]
+    },
+    "Who is this book for?": {
+      "chunks": [
+        {
+          "id": 3,
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "Who this is for",
+          "distance": 0.256
+        },
+        {
+          "id": 4,
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "What this book is not",
+          "distance": 0.3184
+        },
+        {
+          "id": 1,
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "Opening",
+          "distance": 0.327
+        },
+        {
+          "id": 7,
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "Before we start",
+          "distance": 0.3306
+        },
+        {
+          "id": 6,
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "How to read it",
+          "distance": 0.3339
+        },
+        {
+          "id": 5,
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "How real every number is",
+          "distance": 0.3346
+        },
+        {
+          "id": 0,
+          "chapter": "Contents",
+          "section": "Opening",
+          "distance": 0.3465
+        },
+        {
+          "id": 2,
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "What actually changed",
+          "distance": 0.3514
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "Who this is for"
+        },
+        {
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "What this book is not"
+        },
+        {
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "Opening"
+        },
+        {
+          "chapter": "Introduction: Why This Book, and How to Use It",
+          "section": "Before we start"
+        }
+      ]
+    },
+    "Is there a checklist I can just follow?": {
+      "chunks": [
+        {
+          "id": 332,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "1. The one-workflow playbook (Chapters 1 and 2)",
+          "distance": 0.3094
+        },
+        {
+          "id": 342,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "11. Getting found when search changes (Chapter 12)",
+          "distance": 0.3104
+        },
+        {
+          "id": 316,
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "The Whole Playbook, in Order",
+          "distance": 0.312
+        },
+        {
+          "id": 336,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "5. Build what's yours, buy what's anyone's (Chapter 3)",
+          "distance": 0.3126
+        },
+        {
+          "id": 341,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "10. The legal quick-check (Chapter 11)",
+          "distance": 0.3163
+        },
+        {
+          "id": 333,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "2. The measurement starter kit (Chapter 2)",
+          "distance": 0.3172
+        },
+        {
+          "id": 335,
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "4. The four ownables (Chapters 3 and 4)",
+          "distance": 0.3229
+        },
+        {
+          "id": 21,
+          "chapter": "Chapter 1: The Honest State of AI",
+          "section": "The boring playbook that actually works",
+          "distance": 0.3261
+        }
+      ],
+      "citations": [
+        {
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "1. The one-workflow playbook (Chapters 1 and 2)"
+        },
+        {
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "11. Getting found when search changes (Chapter 12)"
+        },
+        {
+          "chapter": "Chapter 12: Getting Found When Search Changes",
+          "section": "The Whole Playbook, in Order"
+        },
+        {
+          "chapter": "Appendix: The Founder's Checklists",
+          "section": "5. Build what's yours, buy what's anyone's (Chapter 3)"
+        }
+      ]
+    }
+  }
+}

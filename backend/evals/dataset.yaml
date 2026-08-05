@@ -1,0 +1,206 @@
+# Golden set for the RAG pipeline.
+#
+# Questions are written the way a founder would actually type them — not in the
+# book's vocabulary — because that is the gap retrieval has to close. A case
+# that quotes the chapter heading back at the index proves nothing.
+#
+# `expect` lists chapters where the answer genuinely lives. Several questions
+# are legitimately covered in two places, and listing both is honest rather
+# than lenient: retrieval is right if it lands in either.
+#
+# Chapters are matched on the part before the colon, so "Chapter 1" can never
+# accidentally match "Chapter 10".
+
+# Set just below the measured baseline (2026-08-02, k=8): hit@k 1.000,
+# hit@1 0.824, mrr 0.912, condense 1.000, answers 1.000. Tight enough that a
+# real regression trips them, loose enough that one flaky LLM-judged case does
+# not. Retrieval is deterministic so it can be held tighter than the rest.
+thresholds:
+  retrieval_hit_at_k: 0.95   # right chapter anywhere in top k — 2 misses of 34 trips it
+  retrieval_hit_at_1: 0.75   # right chapter is the single best hit
+  retrieval_mrr: 0.85
+  condense_pass: 0.75        # only 4 cases, so one failure is 25%
+  answer_pass: 0.85
+  golden_identical: 1.00     # any drift at all is worth a human look
+
+# --------------------------------------------------------------------------
+# Retrieval: does the right chapter come back for a real reader's question?
+# --------------------------------------------------------------------------
+retrieval:
+  - question: Is AI actually real or is this just hype?
+    expect: [Chapter 1]
+
+  - question: Everyone keeps saying we are in an AI bubble. Are we?
+    expect: [Chapter 1, Chapter 10]
+
+  - question: My AI costs go up every time I get a new user. Is that normal?
+    expect: [Chapter 1, Chapter 9]
+
+  - question: Where does AI actually save time in a small company?
+    expect: [Chapter 2]
+
+  - question: I automated a workflow and somehow I have more work now. Why?
+    expect: [Chapter 2]
+
+  - question: How do I measure whether AI is actually helping my team?
+    expect: [Chapter 2]
+
+  - question: Is my product just a wrapper around GPT?
+    expect: [Chapter 3]
+
+  - question: What is the Jasper Test?
+    expect: [Chapter 3]
+
+  - question: What are the four ownables?
+    expect: [Chapter 3, Chapter 4]
+
+  - question: How do I build a moat for an AI startup?
+    expect: [Chapter 4]
+
+  - question: What are the seven powers?
+    expect: [Chapter 4]
+
+  - question: What happens if OpenAI just ships my feature next week?
+    expect: [Chapter 5]
+
+  - question: I am completely dependent on one model provider. How risky is that?
+    expect: [Chapter 5]
+
+  - question: Can I build a real product without hiring any engineers?
+    expect: [Chapter 6]
+
+  - question: I am non-technical. Where do I actually start building?
+    expect: [Chapter 6]
+
+  - question: Which model should I pick for my product?
+    expect: [Chapter 7]
+
+  - question: Why do language models make things up?
+    expect: [Chapter 7, Chapter 8]
+
+  - question: What actually is a model, under the hood?
+    expect: [Chapter 7]
+
+  - question: What is prompt injection and should I worry about it?
+    expect: [Chapter 8]
+
+  - question: My demo works perfectly but it falls apart with real users. Why?
+    expect: [Chapter 8]
+
+  - question: Could my AI feature get me sued by a customer?
+    expect: [Chapter 8, Chapter 11]
+
+  - question: How do I work out what tokens are going to cost me?
+    expect: [Chapter 9]
+
+  - question: Is a free tier a trap for an AI product?
+    expect: [Chapter 9]
+
+  - question: How should I price this so I do not lose money on every user?
+    expect: [Chapter 9]
+
+  - question: Should I be raising money right now or waiting?
+    expect: [Chapter 10]
+
+  - question: What do investors want to hear from an AI startup?
+    expect: [Chapter 10]
+
+  - question: Do I own the copyright on something the AI generated?
+    expect: [Chapter 11]
+
+  - question: Can I use AI output commercially without getting into trouble?
+    expect: [Chapter 11]
+
+  - question: People search with ChatGPT now instead of Google. How do I get found?
+    expect: [Chapter 12]
+
+  - question: What is GEO and is it any different from SEO?
+    expect: [Chapter 12]
+
+  - question: Is the one-person unicorn actually realistic?
+    expect: [Conclusion]
+
+  - question: If AI does the work, what is left for me to do as a founder?
+    expect: [Conclusion]
+
+  - question: Who is this book for?
+    expect: [Introduction]
+
+  - question: Is there a checklist I can just follow?
+    expect: [Appendix]
+
+# --------------------------------------------------------------------------
+# Condense: a follow-up must survive being rewritten standalone.
+#
+# "how long do they last?" embedded on its own retrieves nothing useful,
+# because standalone it is about nothing. This is the step that fixes that,
+# and it is checked deterministically — no judge needed.
+# --------------------------------------------------------------------------
+condense:
+  - history:
+      - role: user
+        content: How do I build a moat for my AI startup?
+      - role: assistant
+        content: The book frames moats as one of seven powers, not as a feeling.
+    question: How long do they usually last?
+    expect_any: [moat, power]
+
+  - history:
+      - role: user
+        content: Is my product just a wrapper?
+      - role: assistant
+        content: The book argues everything is a wrapper, and asks what you own.
+    question: What are the four again?
+    expect_any: [ownable, wrapper, own]
+
+  - history:
+      - role: user
+        content: How should I price my AI product?
+      - role: assistant
+        content: Start from the token bill, then add the rest of the stack.
+    question: And what about the costs underneath it?
+    expect_any: [pric, cost, token]
+
+  - history:
+      - role: user
+        content: What happens if the platform I build on competes with me?
+      - role: assistant
+        content: The book calls the platform your landlord, not your rival.
+    question: What can I actually do about it?
+    expect_any: [platform, landlord, provider]
+
+# --------------------------------------------------------------------------
+# Answers: generated text is judged against the excerpts it was given.
+#
+# `grounded` — every claim must be supported by the retrieved excerpts. This is
+#   the one that catches the model answering from general knowledge, which is
+#   the failure that would quietly make the whole product untrustworthy.
+# `refuse`  — off-topic questions must be declined, per the system prompt.
+# --------------------------------------------------------------------------
+answers:
+  - question: Is my product just a wrapper around GPT?
+    mode: grounded
+
+  - question: How do I work out what tokens are going to cost me?
+    mode: grounded
+
+  - question: Do I own the copyright on something the AI generated?
+    mode: grounded
+
+  - question: Can I build a real product without hiring any engineers?
+    mode: grounded
+
+  - question: What happens if OpenAI just ships my feature next week?
+    mode: grounded
+
+  - question: What is the weather in Mumbai today?
+    mode: refuse
+
+  - question: Write me a short poem about my cat.
+    mode: refuse
+
+  - question: How do I fix a leaking kitchen tap?
+    mode: refuse
+
+  - question: Who won the cricket world cup last year?
+    mode: refuse

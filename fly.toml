@@ -60,7 +60,9 @@ swap_size_mb = 512
     path = '/api/health'
     interval = '30s'
     timeout = '5s'
-    grace_period = '90s'
+    # Fly caps this at 1 minute and warns if you ask for more, so it is set to
+    # the cap rather than to a number that silently gets rewritten.
+    grace_period = '60s'
 
 [[vm]]
   size = 'shared-cpu-1x'

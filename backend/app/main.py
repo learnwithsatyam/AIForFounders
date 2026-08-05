@@ -192,6 +192,12 @@ async def health() -> dict[str, object]:
         "chapters": len(engine.chapters),
         "chat_model": settings.chat_model,
         "top_k": settings.top_k,
+        # Whether ADMIN_PASSWORD reached the process — a boolean, never the
+        # value. Without this, a missing secret and a missing deploy both look
+        # like an identical 404 on /admin, which is impossible to tell apart
+        # from outside the machine.
+        "admin_enabled": admin.enabled,
+        "usage_enabled": recorder.enabled,
         **limiter.stats(),
     }
 

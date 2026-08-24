@@ -1,0 +1,7 @@
+# Eval-only dependencies. Deliberately separate from backend/requirements.txt:
+# none of this is imported at runtime, and shipping a judge library plus its
+# console-formatting stack inside the production image would be dead weight.
+#
+#   pip install -r evals/requirements.txt
+ragjudge>=0.1.0
+pyyaml>=6.0

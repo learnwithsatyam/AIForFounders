@@ -34,8 +34,6 @@ try:
 except ImportError:
     sys.exit("evals need PyYAML:  pip install pyyaml")
 
-from google.genai import types  # noqa: E402
-
 from app.config import settings  # noqa: E402
 from app.rag import Engine, Hit, citations  # noqa: E402
 
@@ -139,71 +137,74 @@ async def run_condense(engine: Engine, cases: list[dict], want: dict) -> Suite:
     return suite
 
 
-GROUNDED_JUDGE = """You are grading an answer for a book Q&A system.
-
-The answer must rest ENTIRELY on the excerpts below. Using correct outside \
-knowledge is a FAILURE — the whole product depends on answers coming from this \
-book and nowhere else. Saying the excerpts do not cover something is a PASS.
-
-EXCERPTS:
-{excerpts}
-
-ANSWER:
-{answer}
-
-Reply with only JSON: {{"pass": true or false, "why": "one short sentence"}}"""
-
-REFUSE_JUDGE = """You are grading a book Q&A system that must only discuss the \
-book "AI for Founders" and a reader's situation as a founder.
-
-It was asked an off-topic question and should have declined, or said the topic \
-is outside what it can help with. Actually answering the question is a FAILURE.
-
-QUESTION: {question}
-
-ANSWER:
-{answer}
-
-Reply with only JSON: {{"pass": true or false, "why": "one short sentence"}}"""
-
-
-async def judge(engine: Engine, prompt: str) -> tuple[bool, str]:
-    resp = await engine.client.aio.models.generate_content(
-        model=settings.condense_model,
-        contents=prompt,
-        config=types.GenerateContentConfig(temperature=0.0, max_output_tokens=200),
-    )
-    raw = (resp.text or "").strip()
-    if raw.startswith("```"):  # models like fencing JSON no matter what you ask
-        raw = raw.strip("`").removeprefix("json").strip()
-    try:
-        v = json.loads(raw)
-        return bool(v.get("pass")), str(v.get("why", ""))[:90]
-    except (json.JSONDecodeError, AttributeError):
-        return False, f"judge returned unparseable output: {raw[:60]!r}"
-
+# --------------------------------------------------------------------------
+# answers — judged by ragjudge
+#
+# This suite used to be a hand-rolled single-shot "is this grounded? yes/no".
+# ragjudge does the same job properly: Faithfulness extracts the individual
+# claims in an answer and checks each one against the retrieved context, so a
+# mostly-right answer with one invented sentence scores 0.8 rather than
+# passing outright. Off-topic refusal is not something its built-in metrics
+# cover, so that is a local metric plugged into the same Suite.
+#
+# The judge is Gemini, via the duck-typed Judge protocol — no second vendor
+# and no second API key just to grade answers.
+# --------------------------------------------------------------------------
 
 async def run_answers(engine: Engine, cases: list[dict], want: dict) -> Suite:
-    suite = Suite("answers")
+    from ragjudge import (  # imported here so the cheap suites need no install
+        AnswerRelevance, ContextRelevance, Faithfulness, Sample,
+    )
+    from ragjudge import Suite as RagSuite
 
+    from gemini_judge import GeminiJudge, Refusal
+
+    suite = Suite("answers")
+    judge = GeminiJudge(engine.client, settings.condense_model)
+
+    # Generate first, judge second: the app's own retrieval and generation are
+    # what is under test, so every sample has to come from the real pipeline.
+    grounded_samples: list[Sample] = []
+    refusal_samples: list[Sample] = []
     for c in cases:
         messages = [{"role": "user", "content": c["question"]}]
         hits = await engine.retrieve(c["question"])
         answer = "".join([chunk async for chunk in engine.answer(hits, messages)])
+        sample = Sample(
+            question=c["question"],
+            contexts=[h.content for h in hits],
+            answer=answer,
+            metadata={"mode": c["mode"]},
+        )
+        (refusal_samples if c["mode"] == "refuse" else grounded_samples).append(sample)
 
-        if c["mode"] == "refuse":
-            prompt = REFUSE_JUDGE.format(question=c["question"], answer=answer)
-        else:
-            excerpts = "\n\n".join(
-                f"--- {h.chapter} > {h.section} ---\n{h.content}" for h in hits
+    reports = []
+    if grounded_samples:
+        reports.append(await RagSuite(
+            name="grounded",
+            metrics=[ContextRelevance(), Faithfulness(), AnswerRelevance()],
+            judge=judge,
+        ).run(grounded_samples))
+    if refusal_samples:
+        reports.append(await RagSuite(
+            name="refusal", metrics=[Refusal()], judge=judge,
+        ).run(refusal_samples))
+
+    metric_means: dict[str, float] = {}
+    for report in reports:
+        for name in report.metric_names:
+            metric_means[name] = report.mean(name)
+        for result in report.results:
+            failed = [s for s in result.scores if not s.passed]
+            detail = "  ".join(
+                f"{s.metric} {s.value:.2f} ({s.reasoning[:60]})" for s in failed
+            ) or "  ".join(f"{s.metric} {s.value:.2f}" for s in result.scores)
+            suite.cases.append(
+                Case(result.sample.question, result.passed, detail)
             )
-            prompt = GROUNDED_JUDGE.format(excerpts=excerpts, answer=answer)
-
-        ok, why = await judge(engine, prompt)
-        suite.cases.append(Case(f"[{c['mode']}] {c['question']}", ok, why))
 
     rate = sum(1 for x in suite.cases if x.passed) / (len(suite.cases) or 1)
-    suite.metrics = {"pass_rate": rate}
+    suite.metrics = {"pass_rate": rate, **metric_means}
     suite.checks = {"pass_rate": (rate, want["answer_pass"])}
     return suite
 

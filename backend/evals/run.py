@@ -192,7 +192,7 @@ async def run_answers(engine: Engine, cases: list[dict], want: dict) -> Suite:
 
     metric_means: dict[str, float] = {}
     for report in reports:
-        for name in report.metric_names:
+        for name in report.metric_names():
             metric_means[name] = report.mean(name)
         for result in report.results:
             failed = [s for s in result.scores if not s.passed]

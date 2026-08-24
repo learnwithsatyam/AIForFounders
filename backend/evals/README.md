@@ -41,23 +41,34 @@ Distances are deterministic — a clean run reports `max_distance_drift 0.000`.
 If that number ever moves while the chunk ids stay the same, the embedding
 model changed underneath your index, and everything needs re-embedding.
 
-**answers** uses `condense_model` as an LLM judge. Groundedness is the failure
+**answers** is judged by [ragjudge](https://pypi.org/project/ragjudge/) through a
+Gemini judge in `gemini_judge.py` — the package ships OpenAI and Anthropic
+judges, but its `Judge` is a Protocol, so the client this app already has
+credentials for satisfies it. Groundedness is the failure
 that matters most: the model answering from general knowledge instead of the
 book is exactly what would quietly make the product untrustworthy.
 
-## Baseline (2026-08-02, k=8)
+## Baseline (k=4)
 
 | Metric | Value |
 |---|---|
 | `hit@k` | **1.000** (34/34) |
 | `hit@1` | 0.824 |
 | `mrr` | 0.912 |
-| mean rank when found | 1.18 |
 | condense pass | 1.000 (4/4) |
 | answers pass | 1.000 (9/9) |
+| context relevance | 0.900 |
+| faithfulness | 0.93–0.96 (varies by run) |
+| answer relevance | 1.000 |
+| refusal | 1.000 |
 | golden identical | 1.000, drift 0.000 |
 
 Thresholds in `dataset.yaml` sit just under these.
+
+**Read the judged metrics as ranges, not points.** Faithfulness measured 0.964
+and 0.927 on two runs of the same k, so a single run moving by a few points is
+noise. Only treat a change as real if it survives a re-run, or if it shows up
+in the deterministic suites too.
 
 ## Adding cases
 

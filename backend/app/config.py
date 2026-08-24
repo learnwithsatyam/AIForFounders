@@ -30,7 +30,21 @@ class Settings(LoaderSettings):
     condense_model: str = "gemini-3.5-flash-lite"
 
     # Retrieval
-    top_k: int = Field(default=8, gt=0, le=20)
+    # 4, not 8. Measured with evals/run.py --suite answers at k=8/4/3.
+    #
+    # The solid parts: prompt tokens halve (~3300 -> ~1700, and they are the
+    # bulk of the Gemini bill), context relevance rises 0.850 -> 0.900 across
+    # runs, and the pass rate is unchanged at 9/9. Passages 5-8 are the weakest
+    # matches — still about the book, not about the question — so dropping them
+    # removes material the model can wander into rather than useful context.
+    #
+    # Faithfulness is NOT part of the case: it measured 0.951 at k=8 and both
+    # 0.964 and 0.927 at k=4 on separate runs. That is judge variance, not a
+    # signal, and one run of it should not be read as a trend.
+    #
+    # k=3 fails 2 of 9 cases, so 4 is the floor rather than a round number.
+    # Re-run the sweep before changing this.
+    top_k: int = Field(default=4, gt=0, le=20)
     recap_penalty: float = Field(default=0.02, ge=0)
 
     # Request shaping

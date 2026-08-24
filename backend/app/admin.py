@@ -240,6 +240,38 @@ async def collect(cur, days: int) -> dict:
         for w, q, o, t, f in await cur.fetchall()
     ]
 
+    # Accounts. Total is all-time — signups are a cumulative asset, not
+    # something to read only inside the selected window — while `new` and the
+    # activity counts respect it.
+    await cur.execute(
+        """SELECT count(*),
+                  count(*) FILTER (WHERE created_at > now() - make_interval(days => %s)),
+                  count(*) FILTER (WHERE last_seen_at > now() - make_interval(days => %s))
+           FROM users;""",
+        (days, days),
+    )
+    users_total, users_new, users_active = await cur.fetchone()
+
+    # LEFT JOIN with the window in the ON clause, not WHERE: a reader who
+    # signed up and has not asked anything yet still needs to appear, and a
+    # WHERE would filter those rows away.
+    await cur.execute(
+        """SELECT u.email, u.name, count(x.id),
+                  to_char(max(x.ts), 'Mon DD HH24:MI'),
+                  to_char(u.created_at, 'Mon DD')
+           FROM users u
+           LEFT JOIN usage x
+             ON x.user_id = u.id AND x.ts > now() - make_interval(days => %s)
+           GROUP BY u.id, u.email, u.name, u.created_at
+           ORDER BY count(x.id) DESC, u.created_at DESC
+           LIMIT 25;""",
+        (days,),
+    )
+    people = [
+        {"email": e, "name": n, "questions": q, "last": last, "joined": joined}
+        for e, n, q, last, joined in await cur.fetchall()
+    ]
+
     # Outright misses plus near-misses: a high top_distance means nothing in
     # the book was really close, even though something was returned.
     await cur.execute(
@@ -273,6 +305,10 @@ async def collect(cur, days: int) -> dict:
         "cost_usd": cost,
         "condense_p50": condense50,
         "retrieve_p50": retrieve50,
+        "users_total": users_total,
+        "users_new": users_new,
+        "users_active": users_active,
+        "people": people,
         "followups": followups,
         "answered": answered,
         "ttft_p50": ttft50,

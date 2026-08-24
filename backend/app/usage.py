@@ -58,8 +58,9 @@ ALTER TABLE usage ADD COLUMN IF NOT EXISTS retrieve_ms   integer;
 INSERT = """
 INSERT INTO usage (ip_hash, question, standalone, chapters, top_distance,
                    answer_chars, ttft_ms, total_ms, outcome, turn,
-                   prompt_tokens, output_tokens, model, condense_ms, retrieve_ms)
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                   prompt_tokens, output_tokens, model, condense_ms, retrieve_ms,
+                   user_id)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 """
 
 
@@ -96,6 +97,11 @@ class Event:
     # call, the vector query, or Gemini itself.
     condense_ms: int | None = None
     retrieve_ms: int | None = None
+
+    # Null for anonymous readers, who remain the default. ip_hash is still
+    # recorded either way, so a signed-in reader's rows are not orphaned if
+    # they later delete the account.
+    user_id: int | None = None
 
 
 class Recorder:
@@ -149,6 +155,7 @@ class Recorder:
                     e.model,
                     e.condense_ms,
                     e.retrieve_ms,
+                    e.user_id,
                 ))
         except Exception:
             # Deliberately swallowed: the reader already has their answer.

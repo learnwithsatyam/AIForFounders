@@ -1,7 +1,11 @@
 // Conversations survive a refresh, a restart, and closing the tab.
 //
-// Kept in localStorage rather than on the server: no accounts, no database
-// rows, and a reader's questions never leave their own machine.
+// Still local-only, but no longer for the reason this comment used to give.
+// The server records every question in the usage table, so "questions never
+// leave your machine" stopped being true the day usage tracking shipped. What
+// is not stored server-side is the answers and the grouping into
+// conversations — which means a signed-in reader's history does not follow
+// them to another device yet. That is a gap, not a policy.
 
 const KEY = 'aiforfounders.chats.v1'
 const MAX_CHATS = 30

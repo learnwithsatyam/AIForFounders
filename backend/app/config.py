@@ -37,9 +37,14 @@ class Settings(LoaderSettings):
     max_question_chars: int = Field(default=1000, gt=0)
     history_turns: int = Field(default=6, ge=0)
 
-    # Abuse limits. In-memory and per-process — see limits.py.
+    # Abuse limits, counted in Postgres — see limits.py.
     rate_per_hour: int = Field(default=10, gt=0)
+    # What a signed-in reader gets instead. Being worth more than the
+    # anonymous allowance is the concrete reason to make an account.
+    rate_per_hour_user: int = Field(default=40, gt=0)
     rate_per_day: int = Field(default=2000, gt=0)
+    # Signup and login attempts per IP per hour, sharing one budget.
+    auth_tries_per_hour: int = Field(default=20, gt=0)
 
     # Usage recording — see usage.py. Off by flipping usage_enabled=false.
     usage_enabled: bool = True

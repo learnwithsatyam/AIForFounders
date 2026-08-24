@@ -317,6 +317,176 @@ body {
   border-radius: 999px;
 }
 
+/* --------------------------- account ------------------------------ */
+
+.account { display: flex; align-items: center; gap: 8px; min-width: 0; }
+
+.account-who {
+  font-size: 0.8rem;
+  color: var(--text-2);
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) { .account-who { display: none; } }
+
+/* ------------------------ auth dialog ----------------------------- */
+
+.modal-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(16, 16, 18, 0.44);
+  animation: fade-in 0.2s var(--ease) backwards;
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  animation: modal-in 0.34s var(--ease-out) backwards;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.modal-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--surface-2);
+  padding: 3px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+.modal-tabs button {
+  flex: 1;
+  font: inherit;
+  font-size: 0.83rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-2);
+  padding: 7px 10px;
+  border-radius: 999px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.modal-tabs button[aria-pressed='true'] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.modal-note {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-2);
+  margin: 0 0 18px;
+}
+
+.field { display: block; margin-bottom: 13px; }
+
+.field > span {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.field > span em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--text-3);
+}
+
+.field input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  transition: border-color 0.18s, box-shadow 0.2s;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.field .hint {
+  display: block;
+  font-style: normal;
+  font-size: 0.72rem;
+  color: var(--text-3);
+  margin-top: 5px;
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-radius: 9px;
+  padding: 9px 11px;
+  margin-bottom: 12px;
+  animation: rise-in 0.28s var(--ease-out) backwards;
+}
+
+.primary-btn {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 11px;
+  padding: 11px;
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--on-accent);
+  transition: transform 0.16s var(--ease), box-shadow 0.2s, opacity 0.2s;
+}
+
+.primary-btn:not(:disabled):hover { box-shadow: var(--glow-lg); }
+.primary-btn:not(:disabled):active { transform: scale(0.985); }
+.primary-btn:disabled { opacity: 0.6; cursor: default; }
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  font-size: 1.3rem;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.modal-close:hover { background: var(--surface-2); color: var(--text); }
+
 /* ------------------------- welcome screen ------------------------- */
 
 .welcome {

@@ -79,6 +79,39 @@ export async function sendChat(messages, onDelta, onCitations, signal) {
   }
 }
 
+// ------------------------------- accounts ----------------------------------
+// Optional throughout: every one of these can fail or return null and the app
+// carries on anonymously, which is the default state.
+
+async function authCall(path, body) {
+  const res = await fetch(`/api/auth/${path}`, {
+    method: body ? 'POST' : 'GET',
+    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    credentials: 'same-origin',
+    body: body ? JSON.stringify(body) : undefined,
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.detail || 'Something went wrong. Try again.')
+  return data
+}
+
+/** Who is signed in, if anyone. Returns null rather than throwing. */
+export async function fetchMe() {
+  try {
+    return (await authCall('me')).user
+  } catch {
+    return null
+  }
+}
+
+export const signUp = (email, password, name) =>
+  authCall('signup', { email, password, name }).then((d) => d.user)
+
+export const signIn = (email, password) =>
+  authCall('login', { email, password }).then((d) => d.user)
+
+export const signOut = () => authCall('logout', {}).then(() => null)
+
 // --------------------------- mock fallback ---------------------------------
 
 const MOCK_ANSWER = `**No backend yet** — this is a sample answer so you can feel how the interface behaves.

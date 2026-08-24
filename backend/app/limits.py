@@ -70,13 +70,21 @@ class Limiter:
         await cur.execute(BUMP, (scope, unit))
         return (await cur.fetchone())[0]
 
-    async def check(self, ip: str) -> str | None:
+    async def check(self, ip: str, user_id: int | None = None, user_per_hour: int = 0) -> str | None:
         """None if allowed, else the message explaining the refusal.
+
+        A signed-in reader is counted against their account rather than their
+        IP, and gets the higher allowance — which is the concrete reason to
+        make an account, and stops a shared office network from being one
+        bucket for everyone in it.
 
         Fails closed. If the count cannot be read there is no way to know what
         has already been spent, and answering costs money — the condense step
         calls Gemini before anything else has a chance to fail.
         """
+        scope = f"user:{user_id}" if user_id else _scope("ip", ip)
+        allowance = user_per_hour if user_id and user_per_hour else self.per_hour
+
         try:
             async with self.pool.connection() as conn, conn.cursor() as cur:
                 today = await self._bump(cur, "global", "day")
@@ -84,9 +92,12 @@ class Limiter:
                     return ("This demo has hit its daily question limit. "
                             "Please try again tomorrow.")
 
-                mine = await self._bump(cur, _scope("ip", ip), "hour")
-                if mine > self.per_hour:
-                    return (f"You have reached {self.per_hour} questions this hour. "
+                mine = await self._bump(cur, scope, "hour")
+                if mine > allowance:
+                    if not user_id:
+                        return (f"You have reached {allowance} questions this hour. "
+                                "Create a free account for more, or try again shortly.")
+                    return (f"You have reached {allowance} questions this hour. "
                             "Please try again shortly.")
 
                 # Housekeeping amortised over requests rather than a cron job.

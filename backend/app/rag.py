@@ -83,25 +83,54 @@ class Engine:
     def __init__(self, s: Settings) -> None:
         self.s = s
         self.client = genai.Client(api_key=s.gemini_api_key)
+        # min_size=0 is deliberate and it is a billing decision, not a
+        # performance one. An idle connection keeps a serverless Postgres
+        # compute *awake*, and Neon's free tier meters compute time rather than
+        # queries — so holding one open around the clock bills ~720 hours a
+        # month for an app that needs a few. With zero, the compute suspends
+        # when idle and the first question after a quiet spell pays a wake-up.
+        #
         # `check` runs a liveness probe before a pooled connection is handed
-        # out, replacing it if it has died. Without this, a serverless Postgres
-        # that suspends on idle (Neon's free tier does, after ~5 minutes) leaves
-        # stale sockets in the pool and the first question after a quiet spell
-        # fails — psycopg's default is no check at all.
+        # out, replacing it if it died while the compute was suspended.
         self.pool = AsyncConnectionPool(
             s.database_url,
-            min_size=1,
+            min_size=0,
             max_size=4,
             open=False,
             check=AsyncConnectionPool.check_connection,
+            # psycopg waits 30s for a connection by default. When Postgres is
+            # simply unreachable that is 30s of a reader watching a spinner
+            # before being told it failed — and 30s per call during startup.
+            # Long enough to cover a serverless wake-up, short enough to fail
+            # like a failure.
+            timeout=10.0,
         )
-        self.chapters: list[str] = []
+        self._chapters: list[str] | None = None
+
+    @property
+    def chapters(self) -> list[str]:
+        """What has been loaded so far — empty until the first successful read."""
+        return self._chapters or []
 
     async def start(self) -> None:
-        await self.pool.open(wait=True)
-        async with self.pool.connection() as conn, conn.cursor() as cur:
-            await cur.execute(CHAPTERS)
-            self.chapters = [r[0] for r in await cur.fetchall()]
+        # wait=False: startup must not block on the database. Blocking here is
+        # what turned a Neon outage into a total outage — the lifespan raised,
+        # uvicorn exited, and the machine stopped serving even the frontend,
+        # which needs no database at all.
+        await self.pool.open(wait=False)
+
+    async def ensure_chapters(self) -> list[str]:
+        """Chapter names, fetched once and cached.
+
+        Loaded lazily rather than at startup. A failure is not cached, so the
+        next question retries instead of leaving the system prompt permanently
+        short of its chapter list.
+        """
+        if self._chapters is None:
+            async with self.pool.connection() as conn, conn.cursor() as cur:
+                await cur.execute(CHAPTERS)
+                self._chapters = [r[0] for r in await cur.fetchall()]
+        return self._chapters
 
     async def stop(self) -> None:
         await self.pool.close()
@@ -197,8 +226,9 @@ class Engine:
     async def answer(
         self, hits: list[Hit], messages: list[dict[str, str]], stats: dict | None = None
     ) -> AsyncIterator[str]:
+        chapters = await self.ensure_chapters()
         system = SYSTEM.format(
-            chapters="\n".join(f"- {c}" for c in self.chapters) or "- (unavailable)"
+            chapters="\n".join(f"- {c}" for c in chapters) or "- (unavailable)"
         )
         stream = await self.client.aio.models.generate_content_stream(
             model=self.s.chat_model,

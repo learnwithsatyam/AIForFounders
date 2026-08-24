@@ -6,9 +6,10 @@ import Composer from './components/Composer.jsx'
 import { ArrowDownIcon, MenuIcon, MoonIcon, SunIcon } from './components/Icons.jsx'
 import { useStickToBottom } from './hooks/useStickToBottom.js'
 import { useTheme } from './hooks/useTheme.js'
+import AuthDialog from './components/AuthDialog.jsx'
 import { createStreamPacer } from './lib/streamPacer.js'
 import { loadChats, saveChats, nextChatId } from './lib/chatStore.js'
-import { sendChat } from './api.js'
+import { fetchMe, sendChat, signOut } from './api.js'
 
 const newChat = () => ({ id: nextChatId(), title: 'New chat', messages: [] })
 
@@ -24,6 +25,10 @@ export default function App() {
   const [busy, setBusy] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 720)
   const [theme, toggleTheme] = useTheme()
+  // Accounts are optional: `user` stays null for anonymous readers and nothing
+  // in the app gates on it.
+  const [user, setUser] = useState(null)
+  const [authMode, setAuthMode] = useState(null) // null | 'in' | 'up'
   const abortRef = useRef(null)
 
   const { scrollRef, contentRef, atBottom, scrollToBottom } = useStickToBottom()
@@ -39,6 +44,12 @@ export default function App() {
   useEffect(() => {
     scrollToBottom(false)
   }, [activeChatId, scrollToBottom])
+
+  // Restore an existing session on load. Failure is silent and simply leaves
+  // the reader anonymous.
+  useEffect(() => {
+    fetchMe().then(setUser)
+  }, [])
 
   function updateChat(chatId, updater) {
     setChats((prev) => prev.map((c) => (c.id === chatId ? updater(c) : c)))
@@ -169,6 +180,27 @@ export default function App() {
 
           <span className="topbar-spacer" />
 
+          {user ? (
+            <div className="account">
+              <span className="account-who" title={user.email}>
+                {user.name || user.email}
+              </span>
+              <button
+                className="ghost-btn"
+                onClick={async () => {
+                  await signOut().catch(() => {})
+                  setUser(null)
+                }}
+              >
+                Sign out
+              </button>
+            </div>
+          ) : (
+            <button className="ghost-btn" onClick={() => setAuthMode('in')}>
+              Sign in
+            </button>
+          )}
+
           <button
             className="icon-btn"
             onClick={toggleTheme}
@@ -213,6 +245,17 @@ export default function App() {
           busy={busy}
         />
       </div>
+
+      {authMode && (
+        <AuthDialog
+          mode={authMode}
+          onClose={() => setAuthMode(null)}
+          onSignedIn={(u) => {
+            setUser(u)
+            setAuthMode(null)
+          }}
+        />
+      )}
     </div>
   )
 }

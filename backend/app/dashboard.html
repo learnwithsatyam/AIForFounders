@@ -338,12 +338,22 @@ function waitBreakdown(d) {
 }
 
 function tables(d) {
-  const rows = TAB === 'recent' ? d.recent : d.misses;
+  const rows = TAB === 'recent' ? d.recent : TAB === 'people' ? d.people : d.misses;
   let inner;
   if (!rows.length) {
-    inner = `<div class="empty">${TAB === 'recent'
-      ? 'No questions in this window'
+    inner = `<div class="empty">${
+      TAB === 'recent' ? 'No questions in this window'
+      : TAB === 'people' ? 'Nobody has created an account yet'
       : 'Nothing — every question found something close'}</div>`;
+  } else if (TAB === 'people') {
+    inner = `<div class="scroll"><table><thead><tr>
+      <th>Reader</th><th>Joined</th><th>Questions</th><th>Last asked</th>
+      </tr></thead><tbody>` + rows.map((r) => `<tr>
+        <td>${esc(r.name || r.email)}${r.name ? ` <span class="pill">${esc(r.email)}</span>` : ''}</td>
+        <td class="when">${esc(r.joined)}</td>
+        <td class="num">${r.questions}</td>
+        <td class="when">${esc(r.last || '—')}</td>
+      </tr>`).join('') + '</tbody></table></div>';
   } else if (TAB === 'recent') {
     inner = `<div class="scroll"><table><thead><tr>
       <th>When</th><th>Question</th><th>Outcome</th><th>First token</th>
@@ -366,6 +376,7 @@ function tables(d) {
     <div class="tabs">
       <button data-tab="recent" aria-pressed="${TAB === 'recent'}">Recent questions</button>
       <button data-tab="misses" aria-pressed="${TAB === 'misses'}">Gaps (${d.misses.length})</button>
+      <button data-tab="people" aria-pressed="${TAB === 'people'}">People (${d.users_total})</button>
     </div>
     ${TAB === 'misses' ? '<p class="sub">Questions that found nothing, or whose closest passage was still far away. This is the most useful list here — it is what readers wanted that the book does not cover.</p>' : ''}
     ${inner}</div>`;
@@ -383,7 +394,7 @@ function render(d) {
       <div class="card kpi">
         <div class="label">Readers</div>
         <div class="value">${compact(d.readers)}</div>
-        <div class="foot">${d.readers ? (d.total / d.readers).toFixed(1) : '0'} questions each</div>
+        <div class="foot">${d.users_total} with accounts${d.users_new ? ` · ${d.users_new} new` : ''}</div>
       </div>
       <div class="card kpi">
         <div class="label">Answered</div>

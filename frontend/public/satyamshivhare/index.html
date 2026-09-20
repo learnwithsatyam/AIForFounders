@@ -187,6 +187,26 @@
   .proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 28px; }
   @media(max-width: 768px) { .proj-grid { grid-template-columns: 1fr; } }
 
+  .proj-img {
+    margin: -36px -36px 24px -36px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    overflow: hidden;
+    background: rgba(0,0,0,0.2);
+  }
+  @media(max-width: 768px) {
+    .proj-img { margin: -28px -28px 20px -28px; }
+  }
+  .proj-img img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .proj:hover .proj-img img {
+    transform: scale(1.03);
+  }
   .proj { padding: 40px; }
   .proj.featured {
     grid-column: 1 / -1;
@@ -294,19 +314,17 @@
     background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
     pointer-events: none; border-radius: 20px;
   }
-  @media(max-width:768px) { .book { grid-template-columns: 1fr; padding: 40px; text-align: center; } .book-cover { margin: 0 auto; } }
-  .book-cover {
-    aspect-ratio: 2/3; border-radius: 12px; width: 100%; max-width: 260px;
-    background: linear-gradient(160deg, #134e4a, #1e1b4b 60%, #05070a);
-    border: 1px solid rgba(255,255,255,0.1);
-    display: flex; flex-direction: column; justify-content: space-between;
-    padding: 28px 24px; box-shadow: 0 30px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,0.2);
-    transform: perspective(1000px) rotateY(-5deg); transition: transform 0.5s;
+  @media(max-width:768px) { .book { grid-template-columns: 1fr; padding: 40px; text-align: center; } .book-cover-wrap { margin: 0 auto; margin-bottom: 30px; } }
+  .book-cover-wrap {
+    width: 100%; max-width: 260px;
+    transform: perspective(1000px) rotateY(-5deg); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .book:hover .book-cover { transform: perspective(1000px) rotateY(0deg) translateY(-10px); }
-  .book-cover .bc-top { font-family: var(--mono); font-size: .65rem; color: var(--accent); letter-spacing: .15em; font-weight: 700; }
-  .book-cover .bc-title { font-weight: 900; font-size: 1.8rem; line-height: 1.15; color: white; margin-top: 20px; }
-  .book-cover .bc-author { font-size: .8rem; color: rgba(255,255,255,.7); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+  .book:hover .book-cover-wrap { transform: perspective(1000px) rotateY(0deg) translateY(-10px); }
+  .book-cover-img {
+    width: 100%; height: auto; display: block;
+    border-radius: 8px;
+    box-shadow: 0 20px 40px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,0.1);
+  }
   .book h3 { font-size: 2rem; font-weight: 900; margin-bottom: 10px; }
   .book .meta { font-family: var(--mono); font-size: .95rem; color: var(--accent2); margin-bottom: 24px; font-weight: 600; }
   .book p { color: var(--text-dim); font-size: 1.1rem; line-height: 1.7; margin-bottom: 30px; }
@@ -346,8 +364,8 @@
   <div class="nav-inner">
     <a class="logo" href="#">satyam<span>.</span>shivhare<span>()</span></a>
     <div class="nav-links">
-      <a href="#expertise">Expertise</a>
       <a href="#projects">Work</a>
+      <a href="#expertise">Expertise</a>
       <a href="#testimonials">Testimonials</a>
       <a href="#experience">Experience</a>
       <a href="#book">Book</a>
@@ -374,9 +392,238 @@
   </div>
 </header>
 
-<!-- 01 Technical Expertise -->
+<!-- 01 Projects -->
+
+<section id="projects" class="wrap">
+  <div class="sec-head reveal"><span class="idx">01</span><h2>Things I've Built & Shipped</h2><div class="rule"></div></div>
+  <div class="proj-grid">
+
+    <div class="proj featured reveal">
+      <div class="proj-top">
+        <h3>ragjudge - Open-source RAG Evaluation Library</h3>
+        <span class="badge live">PYPI & NPM PUBLISHED</span>
+      </div>
+      <p class="desc">
+        Designed and shipped a typed, async LLM-as-judge evaluation library in Python and TypeScript. Features strict claim-decomposition faithfulness and bring-your-own-judge architecture.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Caught a subtle top_k retrieval bug in production, preserving 100% answer pass rates while halving the Gemini API input-token bill.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Open Source</span><span class="chip">LLMOps / Evals</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">Python</span><span class="chip">TypeScript</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="proj featured reveal">
+      <div class="proj-top">
+        <h3>Agentic AI for Building Engineering - Siemens</h3>
+        <span class="badge live">SHIPPED IN PRODUCT</span>
+      </div>
+      <p class="desc">
+        Engineers were spending weeks manually configuring controllers. I built a natural-language assistant that executes complex workflows via typed LLM tools.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Reduced project migration effort by ~40%, automating the creation of over 10,000 building objects per hour.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Agentic AI</span><span class="chip">Enterprise Systems</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">MCP</span><span class="chip">Python</span><span class="chip">gRPC</span><span class="chip">C#/.NET</span><span class="chip">NUnit</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-img"><img src="proj-aiforfounders.png" alt="AIForFounders SaaS Preview" onerror="this.parentElement.style.display=\'none\'"></div>
+      <div class="proj-top">
+        <h3>AIForFounders SaaS Platform</h3>
+        <span class="badge live">LIVE</span>
+      </div>
+      <p class="desc">
+        A full production RAG stack built solo. Features domain-aware re-ranking, token streaming, and hallucination control.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Delivers instant, cited answers from my book with hard-bounded daily inference costs.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">RAG Pipeline</span><span class="chip">SaaS</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">FastAPI</span><span class="chip">pgvector</span><span class="chip">SSE</span><span class="chip">Pydantic v2</span><span class="chip">Neon</span>
+        </div>
+      </div>
+      <div class="proj-links"><a href="https://aiforfounders.in" target="_blank" rel="noopener">aiforfounders.in →</a></div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-img"><img src="proj-stemy.png" alt="Stemy - B2B Preview" onerror="this.parentElement.style.display=\'none\'"></div>
+      <div class="proj-top">
+        <h3>Stemy - B2B Supply Chain SaaS</h3>
+        <span class="badge year">2026</span>
+      </div>
+      <p class="desc">
+        Designed and built a complete B2B marketplace platform with real-time chat, company hierarchies, and subscription billing.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Shipped a fully tested platform (900+ tests) solo, enabling secure buyer-supplier transactions.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">B2B SaaS</span><span class="chip">Multi-tenant</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">NestJS</span><span class="chip">React 19</span><span class="chip">Socket.io</span><span class="chip">Stripe</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-img"><img src="proj-eduledger.png" alt="EduLedgerNG - Fintech Preview" onerror="this.parentElement.style.display=\'none\'"></div>
+      <div class="proj-top">
+        <h3>EduLedgerNG - Fintech for Schools</h3>
+        <span class="badge live">10+ SCHOOLS LIVE</span>
+      </div>
+      <p class="desc">
+        Sole engineer for a Nigerian fintech platform handling complex split-settlement payments and immutable fee approvals.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Secured financial data for schools with hardened RLS security and automated payment flows.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Fintech</span><span class="chip">EdTech</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">Supabase RLS</span><span class="chip">Deno</span><span class="chip">React 18</span><span class="chip">TypeScript</span>
+        </div>
+      </div>
+      <div class="proj-links"><a href="https://eduledgerng.com" target="_blank" rel="noopener">eduledgerng.com →</a></div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-img"><img src="proj-bholuma.png" alt="Bholuma - AI Preview" onerror="this.parentElement.style.display=\'none\'"></div>
+      <div class="proj-top">
+        <h3>Bholuma - AI Transcription & Subtitles</h3>
+        <span class="badge live">LIVE</span>
+      </div>
+      <p class="desc">
+        Fully serverless speech-to-text SaaS: Lambda + EventBridge + DynamoDB job tracking, pre-signed S3 uploads and AWS Transcribe with multi-language support.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Transcribes a 5-minute video to SRT in under 60 seconds with fully automated credit-based billing.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Serverless</span><span class="chip">Event-driven</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">AWS Lambda</span><span class="chip">EventBridge</span><span class="chip">Next.js</span><span class="chip">DynamoDB</span>
+        </div>
+      </div>
+      <div class="proj-links"><a href="https://bholuma.in" target="_blank" rel="noopener">bholuma.in →</a></div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-img"><img src="proj-marketpal.png" alt="Marketpal.com Preview" onerror="this.parentElement.style.display=\'none\'"></div>
+      <div class="proj-top">
+        <h3>Marketpal.com</h3>
+        <span class="badge live">LIVE</span>
+      </div>
+      <p class="desc">
+        B2B Supplier Marketplace where I served as the Software Architect. Designed the core buyer-supplier matching algorithm (handling location, response times, and dominance penalties) and the lead-distribution state machine.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Architected the core IP and successfully guided the development team through delivery to production.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Architecture</span><span class="chip">Algorithms</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">TypeScript</span><span class="chip">State Machines</span><span class="chip">DigitalOcean</span>
+        </div>
+      </div>
+      <div class="proj-links"><a href="https://marketpal.com" target="_blank" rel="noopener">marketpal.com →</a></div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-img"><img src="proj-zerodha.png" alt="Zerodha MCP Server Preview" onerror="this.parentElement.style.display=\'none\'"></div>
+      <div class="proj-top">
+        <h3>Zerodha MCP Server</h3>
+        <span class="badge year">2026</span>
+      </div>
+      <p class="desc">
+        Trading operations exposed as typed, Claude-compatible tools for LLM agents. A working implementation of the protocol behind today's AI agents.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Mirrors the server-side architecture of the MCP client work shipped at Siemens.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">LLM Agents</span><span class="chip">Protocol Design</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">MCP</span><span class="chip">Claude</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-img"><img src="proj-listic.png" alt="Listic.in Preview" onerror="this.parentElement.style.display=\'none\'"></div>
+      <div class="proj-top">
+        <h3>Listic.in</h3>
+        <span class="badge live">LIVE</span>
+      </div>
+      <p class="desc">
+        An event-driven AI product-photography pipeline on Azure using Gemini Vision for background removal, lighting correction, and scene generation.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Cuts SME product photography costs by ~90%.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Event-driven</span><span class="chip">Image Pipeline</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">Gemini Vision</span><span class="chip">Azure</span>
+        </div>
+      </div>
+      <div class="proj-links"><a href="https://listic.in" target="_blank" rel="noopener">listic.in →</a></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 02 Technical Expertise -->
+
 <section id="expertise" class="wrap">
-  <div class="sec-head reveal"><span class="idx">01</span><h2>Technical Expertise</h2><div class="rule"></div></div>
+  <div class="sec-head reveal"><span class="idx">02</span><h2>Technical Expertise</h2><div class="rule"></div></div>
   <div class="skills-grid">
     <div class="skill-card aud reveal">
       <h3><span class="icon ic-ai">◆</span> AI / LLM Engineering</h3>
@@ -443,226 +690,6 @@
         <span class="chip">Docker</span><span class="chip">GitLab CI/CD</span><span class="chip">GitHub Actions</span>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- 02 Projects -->
-<section id="projects" class="wrap">
-  <div class="sec-head reveal"><span class="idx">02</span><h2>Things I've Built & Shipped</h2><div class="rule"></div></div>
-  <div class="proj-grid">
-
-    <div class="proj featured reveal">
-      <div class="proj-top">
-        <h3>ragjudge - Open-source RAG Evaluation Library</h3>
-        <span class="badge live">PYPI & NPM PUBLISHED</span>
-      </div>
-      <p class="desc">
-        Designed and shipped a typed, async LLM-as-judge evaluation library in Python and TypeScript. Features strict claim-decomposition faithfulness and bring-your-own-judge architecture.
-      </p>
-      <div class="impact">
-        <b>Impact:</b> Caught a subtle top_k retrieval bug in production, preserving 100% answer pass rates while halving the Gemini API input-token bill.
-      </div>
-      <div class="chips-container">
-        <div class="chip-row">
-          <span class="chip-label">Focus:</span>
-          <span class="chip">Open Source</span><span class="chip">LLMOps / Evals</span>
-        </div>
-        <div class="chip-row">
-          <span class="chip-label">Stack:</span>
-          <span class="chip">Python</span><span class="chip">TypeScript</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="proj featured reveal">
-      <div class="proj-top">
-        <h3>Agentic AI for Building Engineering - Siemens</h3>
-        <span class="badge live">SHIPPED IN PRODUCT</span>
-      </div>
-      <p class="desc">
-        Engineers were spending weeks manually configuring controllers. I built a natural-language assistant that executes complex workflows via typed LLM tools.
-      </p>
-      <div class="impact">
-        <b>Impact:</b> Reduced project migration effort by ~40%, automating the creation of over 10,000 building objects per hour.
-      </div>
-      <div class="chips-container">
-        <div class="chip-row">
-          <span class="chip-label">Focus:</span>
-          <span class="chip">Agentic AI</span><span class="chip">Enterprise Systems</span>
-        </div>
-        <div class="chip-row">
-          <span class="chip-label">Stack:</span>
-          <span class="chip">MCP</span><span class="chip">Python</span><span class="chip">gRPC</span><span class="chip">C#/.NET</span><span class="chip">NUnit</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="proj reveal">
-      <div class="proj-top">
-        <h3>AIForFounders SaaS Platform</h3>
-        <span class="badge live">LIVE</span>
-      </div>
-      <p class="desc">
-        A full production RAG stack built solo. Features domain-aware re-ranking, token streaming, and hallucination control.
-      </p>
-      <div class="impact">
-        <b>Impact:</b> Delivers instant, cited answers from my book with hard-bounded daily inference costs.
-      </div>
-      <div class="chips-container">
-        <div class="chip-row">
-          <span class="chip-label">Focus:</span>
-          <span class="chip">RAG Pipeline</span><span class="chip">SaaS</span>
-        </div>
-        <div class="chip-row">
-          <span class="chip-label">Stack:</span>
-          <span class="chip">FastAPI</span><span class="chip">pgvector</span><span class="chip">SSE</span><span class="chip">Pydantic v2</span><span class="chip">Neon</span>
-        </div>
-      </div>
-      <div class="proj-links"><a href="https://aiforfounders.in" target="_blank" rel="noopener">aiforfounders.in →</a></div>
-    </div>
-
-    <div class="proj reveal">
-      <div class="proj-top">
-        <h3>Stemy - B2B Supply Chain SaaS</h3>
-        <span class="badge year">2026</span>
-      </div>
-      <p class="desc">
-        Designed and built a complete B2B marketplace platform with real-time chat, company hierarchies, and subscription billing.
-      </p>
-      <div class="impact">
-        <b>Impact:</b> Shipped a fully tested platform (900+ tests) solo, enabling secure buyer-supplier transactions.
-      </div>
-      <div class="chips-container">
-        <div class="chip-row">
-          <span class="chip-label">Focus:</span>
-          <span class="chip">B2B SaaS</span><span class="chip">Multi-tenant</span>
-        </div>
-        <div class="chip-row">
-          <span class="chip-label">Stack:</span>
-          <span class="chip">NestJS</span><span class="chip">React 19</span><span class="chip">Socket.io</span><span class="chip">Stripe</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="proj reveal">
-      <div class="proj-top">
-        <h3>EduLedgerNG - Fintech for Schools</h3>
-        <span class="badge live">10+ SCHOOLS LIVE</span>
-      </div>
-      <p class="desc">
-        Sole engineer for a Nigerian fintech platform handling complex split-settlement payments and immutable fee approvals.
-      </p>
-      <div class="impact">
-        <b>Impact:</b> Secured financial data for schools with hardened RLS security and automated payment flows.
-      </div>
-      <div class="chips-container">
-        <div class="chip-row">
-          <span class="chip-label">Focus:</span>
-          <span class="chip">Fintech</span><span class="chip">EdTech</span>
-        </div>
-        <div class="chip-row">
-          <span class="chip-label">Stack:</span>
-          <span class="chip">Supabase RLS</span><span class="chip">Deno</span><span class="chip">React 18</span><span class="chip">TypeScript</span>
-        </div>
-      </div>
-      <div class="proj-links"><a href="https://eduledgerng.com" target="_blank" rel="noopener">eduledgerng.com →</a></div>
-    </div>
-
-    <div class="proj reveal">
-      <div class="proj-top">
-        <h3>Bholuma - AI Transcription & Subtitles</h3>
-        <span class="badge live">LIVE</span>
-      </div>
-      <p class="desc">
-        Fully serverless speech-to-text SaaS: Lambda + EventBridge + DynamoDB job tracking, pre-signed S3 uploads and AWS Transcribe with multi-language support.
-      </p>
-      <div class="impact">
-        <b>Impact:</b> Transcribes a 5-minute video to SRT in under 60 seconds with fully automated credit-based billing.
-      </div>
-      <div class="chips-container">
-        <div class="chip-row">
-          <span class="chip-label">Focus:</span>
-          <span class="chip">Serverless</span><span class="chip">Event-driven</span>
-        </div>
-        <div class="chip-row">
-          <span class="chip-label">Stack:</span>
-          <span class="chip">AWS Lambda</span><span class="chip">EventBridge</span><span class="chip">Next.js</span><span class="chip">DynamoDB</span>
-        </div>
-      </div>
-      <div class="proj-links"><a href="https://bholuma.in" target="_blank" rel="noopener">bholuma.in →</a></div>
-    </div>
-
-    <div class="proj reveal">
-      <div class="proj-top">
-        <h3>Marketpal.com</h3>
-        <span class="badge live">LIVE</span>
-      </div>
-      <p class="desc">
-        B2B Supplier Marketplace where I served as the Software Architect. Designed the core buyer-supplier matching algorithm (handling location, response times, and dominance penalties) and the lead-distribution state machine.
-      </p>
-      <div class="impact">
-        <b>Impact:</b> Architected the core IP and successfully guided the development team through delivery to production.
-      </div>
-      <div class="chips-container">
-        <div class="chip-row">
-          <span class="chip-label">Focus:</span>
-          <span class="chip">Architecture</span><span class="chip">Algorithms</span>
-        </div>
-        <div class="chip-row">
-          <span class="chip-label">Stack:</span>
-          <span class="chip">TypeScript</span><span class="chip">State Machines</span><span class="chip">DigitalOcean</span>
-        </div>
-      </div>
-      <div class="proj-links"><a href="https://marketpal.com" target="_blank" rel="noopener">marketpal.com →</a></div>
-    </div>
-
-    <div class="proj reveal">
-      <div class="proj-top">
-        <h3>Zerodha MCP Server</h3>
-        <span class="badge year">2026</span>
-      </div>
-      <p class="desc">
-        Trading operations exposed as typed, Claude-compatible tools for LLM agents. A working implementation of the protocol behind today's AI agents.
-      </p>
-      <div class="impact">
-        <b>Impact:</b> Mirrors the server-side architecture of the MCP client work shipped at Siemens.
-      </div>
-      <div class="chips-container">
-        <div class="chip-row">
-          <span class="chip-label">Focus:</span>
-          <span class="chip">LLM Agents</span><span class="chip">Protocol Design</span>
-        </div>
-        <div class="chip-row">
-          <span class="chip-label">Stack:</span>
-          <span class="chip">MCP</span><span class="chip">Claude</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="proj reveal">
-      <div class="proj-top">
-        <h3>Listic.in</h3>
-        <span class="badge year">2026</span>
-      </div>
-      <p class="desc">
-        An event-driven AI product-photography pipeline on Azure using Gemini Vision for background removal, lighting correction, and scene generation.
-      </p>
-      <div class="impact">
-        <b>Impact:</b> Cuts SME product photography costs by ~90%.
-      </div>
-      <div class="chips-container">
-        <div class="chip-row">
-          <span class="chip-label">Focus:</span>
-          <span class="chip">Event-driven</span><span class="chip">Image Pipeline</span>
-        </div>
-        <div class="chip-row">
-          <span class="chip-label">Stack:</span>
-          <span class="chip">Gemini Vision</span><span class="chip">Azure</span>
-        </div>
-      </div>
-      <div class="proj-links"><a href="https://listic.in" target="_blank" rel="noopener">listic.in →</a></div>
-    </div>
-
   </div>
 </section>
 
@@ -782,10 +809,8 @@
 <section id="book" class="wrap">
   <div class="sec-head reveal"><span class="idx">05</span><h2>Publication</h2><div class="rule"></div></div>
   <div class="book reveal">
-    <div class="book-cover">
-      <div class="bc-top">A PRACTICAL GUIDE</div>
-      <div class="bc-title">AI for<br>Founders</div>
-      <div class="bc-author">SATYAM SHIVHARE</div>
+    <div class="book-cover-wrap">
+      <img class="book-cover-img" src="book_cover.jpg" alt="AI for Founders Book Cover">
     </div>
     <div>
       <h3>AI for Founders</h3>
@@ -809,7 +834,7 @@
 
 <footer>
   <div class="wrap">
-    <p>Designed & built by <a href="mailto:mkssshivhare@gmail.com">Satyam Shivhare</a> - single HTML file, no framework needed ⚡</p>
+    <p>&copy; 2026 Satyam Shivhare. All rights reserved.</p>
   </div>
 </footer>
 

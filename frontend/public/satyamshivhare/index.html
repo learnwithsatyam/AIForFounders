@@ -3,322 +3,423 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Satyam Shivhare — AI · Backend · Frontend Engineer</title>
-<meta name="description" content="Satyam Shivhare — engineer shipping production AI systems, backend platforms, and polished frontends. Agentic AI at Siemens, full-stack SaaS built solo, author of AI for Founders.">
+<title>Satyam Shivhare - AI & Full-Stack Engineer</title>
+<meta name="description" content="Satyam Shivhare helps founders and enterprises build production-ready AI, backend platforms, and polished frontends. Author of AI for Founders.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0a0e17;
-    --bg-soft:#0f1522;
-    --card:#131b2c;
-    --card-hover:#182238;
-    --border:#1f2a40;
-    --border-bright:#2c3b5c;
-    --text:#e6ebf4;
-    --text-dim:#93a0b8;
-    --text-faint:#5f6c85;
-    --accent:#5eead4;      /* teal */
-    --accent2:#818cf8;     /* indigo */
-    --accent3:#f0abfc;     /* pink */
-    --mono:'JetBrains Mono',ui-monospace,monospace;
+  :root {
+    --bg: #06090f;
+    --card-bg: rgba(15, 20, 31, 0.6);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(94, 234, 212, 0.4);
+    --text: #ffffff;
+    --text-dim: #a1aabf;
+    --text-faint: #626d85;
+    --accent: #5eead4;
+    --accent-hover: #4ccbb8;
+    --accent2: #818cf8;
+    --accent3: #f0abfc;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
   }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    background:var(--bg);color:var(--text);
-    font-family:'Inter',system-ui,-apple-system,sans-serif;
-    line-height:1.6;-webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--bg); color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -1px -1px;
   }
-  ::selection{background:rgba(94,234,212,.25)}
+  ::selection { background: rgba(94,234,212,.25); }
 
-  /* ambient glow */
-  .glow{position:fixed;border-radius:50%;filter:blur(120px);opacity:.14;pointer-events:none;z-index:0}
-  .glow.a{width:560px;height:560px;background:var(--accent);top:-180px;right:-120px}
-  .glow.b{width:480px;height:480px;background:var(--accent2);top:52%;left:-200px}
+  /* Animated Ambient Glows */
+  .glow { position: fixed; border-radius: 50%; filter: blur(120px); opacity: .15; pointer-events: none; z-index: 0; mix-blend-mode: screen; }
+  .glow.a { width: 600px; height: 600px; background: var(--accent); top: -200px; right: -150px; animation: float1 20s ease-in-out infinite; }
+  .glow.b { width: 500px; height: 500px; background: var(--accent2); top: 40%; left: -250px; animation: float2 25s ease-in-out infinite; }
+  .glow.c { width: 400px; height: 400px; background: var(--accent3); bottom: -100px; right: 10%; animation: float3 22s ease-in-out infinite; opacity: 0.1; }
 
-  .wrap{max-width:1060px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+  @keyframes float1 { 0%, 100% { transform: translate(0, 0); } 33% { transform: translate(40px, 60px) scale(1.1); } 66% { transform: translate(-30px, 20px) scale(0.9); } }
+  @keyframes float2 { 0%, 100% { transform: translate(0, 0); } 33% { transform: translate(-50px, -40px) scale(1.15); } 66% { transform: translate(30px, 50px) scale(0.85); } }
+  @keyframes float3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-40px, -60px) scale(1.2); } }
 
-  /* nav */
-  nav{
-    position:sticky;top:0;z-index:50;
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    background:rgba(10,14,23,.78);border-bottom:1px solid var(--border);
-  }
-  .nav-inner{max-width:1060px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
-  .logo{font-family:var(--mono);font-weight:600;font-size:.95rem;color:var(--text);text-decoration:none}
-  .logo span{color:var(--accent)}
-  .nav-links{display:flex;gap:26px;align-items:center}
-  .nav-links a{color:var(--text-dim);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .2s}
-  .nav-links a:hover{color:var(--accent)}
-  .nav-cta{
-    border:1px solid var(--accent);color:var(--accent)!important;
-    padding:7px 16px;border-radius:8px;transition:background .2s!important;
-  }
-  .nav-cta:hover{background:rgba(94,234,212,.1)}
-  @media(max-width:720px){.nav-links a:not(.nav-cta){display:none}}
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
-  /* hero */
-  header{padding:110px 0 90px}
-  .kicker{
-    font-family:var(--mono);color:var(--accent);font-size:.85rem;
-    letter-spacing:.06em;margin-bottom:18px;display:block;
+  /* Glassmorphic Nav */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    background: rgba(6, 9, 15, 0.7); border-bottom: 1px solid var(--border);
   }
-  h1{font-size:clamp(2.4rem,6vw,3.9rem);font-weight:800;letter-spacing:-.02em;line-height:1.08}
-  .hero-role{
-    font-size:clamp(1.15rem,2.6vw,1.55rem);font-weight:600;margin-top:10px;
-    background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .hero-sub{max-width:640px;color:var(--text-dim);margin-top:22px;font-size:1.02rem}
-  .hero-sub strong{color:var(--text);font-weight:600}
-  .hero-actions{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap}
-  .btn{
-    display:inline-flex;align-items:center;gap:8px;
-    padding:12px 22px;border-radius:10px;font-weight:600;font-size:.92rem;
-    text-decoration:none;transition:transform .15s,box-shadow .15s,background .2s;
-  }
-  .btn-primary{background:var(--accent);color:#04211b}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(94,234,212,.25)}
-  .btn-ghost{border:1px solid var(--border-bright);color:var(--text)}
-  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-  .hero-stats{display:flex;gap:38px;margin-top:52px;flex-wrap:wrap}
-  .stat .n{font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--text)}
-  .stat .n em{color:var(--accent);font-style:normal}
-  .stat .l{font-size:.8rem;color:var(--text-faint);margin-top:2px}
+  .nav-inner { max-width: 1100px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-family: var(--mono); font-weight: 700; font-size: 1rem; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .logo::before { content: ""; display: block; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  .logo span { color: var(--text-dim); }
 
-  /* audience cards */
-  .aud ul{list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:4px}
-  .aud li{color:var(--text-dim);font-size:.88rem;padding-left:18px;position:relative}
-  .aud li::before{content:"▹";position:absolute;left:0;color:var(--accent)}
-  .aud li b{color:var(--text);font-weight:600}
-
-  /* sections */
-  section{padding:76px 0}
-  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:40px}
-  .sec-head h2{font-size:1.65rem;font-weight:700;letter-spacing:-.01em}
-  .sec-head .idx{font-family:var(--mono);color:var(--accent);font-size:.9rem}
-  .sec-head .rule{flex:1;height:1px;background:var(--border);transform:translateY(-6px)}
-
-  /* skills */
-  .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
-  .skill-card{
-    background:var(--card);border:1px solid var(--border);border-radius:14px;
-    padding:26px;transition:border-color .25s,transform .25s;
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a { color: var(--text-dim); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000 !important;
+    padding: 8px 22px; border-radius: 99px; font-weight: 700; transition: transform .2s, filter .2s !important;
   }
-  .skill-card:hover{border-color:var(--border-bright);transform:translateY(-3px)}
-  .skill-card h3{font-size:1.02rem;display:flex;align-items:center;gap:10px;margin-bottom:6px}
-  .skill-card .icon{
-    width:34px;height:34px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;
-    font-size:1.05rem;flex:none;
-  }
-  .ic-ai{background:rgba(94,234,212,.12);color:var(--accent)}
-  .ic-be{background:rgba(129,140,248,.12);color:var(--accent2)}
-  .ic-fe{background:rgba(240,171,252,.12);color:var(--accent3)}
-  .ic-ops{background:rgba(251,191,36,.12);color:#fbbf24}
-  .skill-card p.blurb{color:var(--text-faint);font-size:.83rem;margin-bottom:14px}
-  .chips{display:flex;flex-wrap:wrap;gap:7px}
-  .chip{
-    font-family:var(--mono);font-size:.72rem;color:var(--text-dim);
-    border:1px solid var(--border);border-radius:6px;padding:4px 9px;
-  }
-  .grid-2{grid-template-columns:repeat(2,1fr)}
-  @media(max-width:680px){.grid-2{grid-template-columns:1fr}}
-  .chip.hot{color:var(--accent);border-color:rgba(94,234,212,.35);background:rgba(94,234,212,.06)}
+  .nav-cta:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 20px rgba(94, 234, 212, 0.3); }
+  @media(max-width:768px) { .nav-links a:not(.nav-cta) { display: none; } }
 
-  /* projects */
-  .proj-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
-  .proj{
-    background:var(--card);border:1px solid var(--border);border-radius:14px;
-    padding:26px;display:flex;flex-direction:column;
-    transition:border-color .25s,transform .25s,background .25s;
+  /* Hero Section */
+  header { padding: 140px 0 110px; text-align: center; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); color: var(--accent); font-size: .85rem;
+    letter-spacing: .08em; margin-bottom: 30px; background: rgba(94,234,212,.08);
+    padding: 8px 20px; border-radius: 99px; border: 1px solid rgba(94,234,212,.2);
+    text-transform: uppercase; font-weight: 600;
   }
-  .proj:hover{border-color:var(--border-bright);background:var(--card-hover);transform:translateY(-3px)}
-  .proj.featured{grid-column:1/-1}
-  .proj-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
-  .proj h3{font-size:1.12rem;font-weight:700}
-  .proj h3 a{color:var(--text);text-decoration:none}
-  .proj h3 a:hover{color:var(--accent)}
-  .badge{
-    font-family:var(--mono);font-size:.68rem;padding:3px 9px;border-radius:99px;white-space:nowrap;flex:none;
+  .kicker::before { content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; display: block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(94,234,212,.7); } 70% { box-shadow: 0 0 0 6px rgba(94,234,212,0); } 100% { box-shadow: 0 0 0 0 rgba(94,234,212,0); } }
+
+  h1 {
+    font-size: clamp(3rem, 6.5vw, 5rem); font-weight: 900; letter-spacing: -.04em; line-height: 1.05; margin-bottom: 32px;
+    color: #fff;
   }
-  .badge.live{color:#4ade80;border:1px solid rgba(74,222,128,.4);background:rgba(74,222,128,.07)}
-  .badge.year{color:var(--text-faint);border:1px solid var(--border)}
-  .proj .tag-line{font-size:.8rem;color:var(--accent);font-family:var(--mono);margin-bottom:12px}
-  .proj p.desc{color:var(--text-dim);font-size:.92rem;flex:1}
-  .proj p.desc b{color:var(--text);font-weight:600}
-  .proj .chips{margin-top:18px}
-  .proj-links{margin-top:16px;display:flex;gap:16px}
-  .proj-links a{font-size:.83rem;font-weight:600;color:var(--accent);text-decoration:none}
-  .proj-links a:hover{text-decoration:underline}
-
-  /* experience */
-  .timeline{position:relative;padding-left:30px}
-  .timeline::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--border)}
-  .t-item{position:relative;padding-bottom:46px}
-  .t-item:last-child{padding-bottom:0}
-  .t-item::before{
-    content:"";position:absolute;left:-30px;top:7px;width:14px;height:14px;border-radius:50%;
-    background:var(--bg);border:3px solid var(--accent);
+  h1 span.hl {
+    background: linear-gradient(to right, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-size: 200% auto; animation: shine 5s linear infinite;
   }
-  .t-item .when{font-family:var(--mono);font-size:.78rem;color:var(--accent);margin-bottom:5px}
-  .t-item h3{font-size:1.14rem;font-weight:700}
-  .t-item .org{color:var(--text-dim);font-size:.92rem;margin-bottom:12px}
-  .t-item ul{list-style:none;display:flex;flex-direction:column;gap:9px}
-  .t-item li{color:var(--text-dim);font-size:.92rem;padding-left:20px;position:relative}
-  .t-item li::before{content:"▹";position:absolute;left:0;color:var(--accent)}
-  .t-item li b{color:var(--text);font-weight:600}
+  @keyframes shine { to { background-position: 200% center; } }
 
-  /* book */
-  .book{
-    display:grid;grid-template-columns:200px 1fr;gap:36px;align-items:center;
-    background:linear-gradient(135deg,var(--card),#141230);
-    border:1px solid var(--border);border-radius:18px;padding:38px;
+  .hero-sub { max-width: 760px; margin: 0 auto; color: var(--text-dim); font-size: 1.25rem; line-height: 1.7; font-weight: 400; }
+  .hero-sub strong { color: var(--text); font-weight: 600; }
+
+  .hero-actions { margin-top: 48px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px 32px; border-radius: 99px; font-weight: 700; font-size: 1.05rem;
+    text-decoration: none; transition: all .3s cubic-bezier(.25,.8,.25,1);
+    position: relative; overflow: hidden;
   }
-  @media(max-width:640px){.book{grid-template-columns:1fr}}
-  .book-cover{
-    aspect-ratio:2/3;border-radius:8px;max-width:200px;width:100%;
-    background:linear-gradient(160deg,#134e4a,#1e1b4b 60%,#0a0e17);
-    border:1px solid var(--border-bright);
-    display:flex;flex-direction:column;justify-content:space-between;
-    padding:20px 16px;box-shadow:0 16px 40px rgba(0,0,0,.45);
+  .btn-primary { background: var(--text); color: #000; }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(255,255,255,.2); background: #fff; }
+  .btn-ghost {
+    background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
   }
-  .book-cover .bc-top{font-family:var(--mono);font-size:.62rem;color:var(--accent);letter-spacing:.1em}
-  .book-cover .bc-title{font-weight:800;font-size:1.35rem;line-height:1.15}
-  .book-cover .bc-author{font-size:.72rem;color:var(--text-dim)}
-  .book h3{font-size:1.4rem;font-weight:700;margin-bottom:4px}
-  .book .meta{font-family:var(--mono);font-size:.8rem;color:var(--accent);margin-bottom:14px}
-  .book p{color:var(--text-dim);font-size:.94rem}
-  .book .btn{margin-top:20px}
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); transform: translateY(-3px); }
 
-  /* contact */
-  #contact{text-align:center;padding:100px 0 90px}
-  #contact .kicker{margin-bottom:10px}
-  #contact h2{font-size:2rem;font-weight:800;margin-bottom:14px}
-  #contact p{color:var(--text-dim);max-width:520px;margin:0 auto 34px}
-  .contact-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  /* Trust Stats */
+  .hero-stats {
+    display: flex; gap: 50px; margin-top: 80px; justify-content: center; flex-wrap: wrap;
+    border-top: 1px solid var(--border); padding-top: 50px;
+  }
+  .stat { text-align: center; position: relative; }
+  @media(max-width: 768px) { .hero-stats { gap: 30px; } }
+  .stat .n { font-family: var(--mono); font-size: 2.2rem; font-weight: 800; color: var(--text); line-height: 1; }
+  .stat .n em { color: var(--accent); font-style: normal; }
+  .stat .l { font-size: .85rem; color: var(--text-dim); margin-top: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
 
-  footer{border-top:1px solid var(--border);padding:26px 0;text-align:center}
-  footer p{font-family:var(--mono);font-size:.75rem;color:var(--text-faint)}
-  footer a{color:var(--text-dim);text-decoration:none}
-  footer a:hover{color:var(--accent)}
+  /* Sections */
+  section { padding: 80px 0 140px; }
+  .sec-head { display: flex; align-items: center; gap: 20px; margin-bottom: 60px; padding-top: 40px; }
+  .sec-head h2 { font-size: 2.2rem; font-weight: 800; letter-spacing: -.02em; white-space: nowrap; }
+  .sec-head .idx {
+    font-family: var(--mono); color: var(--accent); font-size: 1rem;
+    background: rgba(94,234,212,.1); padding: 4px 12px; border-radius: 6px; white-space: nowrap;
+  }
+  .sec-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
 
-  /* reveal on scroll */
-  .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
-  .reveal.on{opacity:1;transform:none}
-  @media(prefers-reduced-motion:reduce){
-    .reveal{opacity:1;transform:none;transition:none}
-    html{scroll-behavior:auto}
+  /* Glassmorphism Cards */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 28px; }
+  @media(max-width: 768px) { .skills-grid { grid-template-columns: 1fr; } }
+
+  .skill-card, .proj {
+    display: flex; flex-direction: column;
+    background: var(--card-bg);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border); border-radius: 20px;
+    padding: 36px; transition: all .4s cubic-bezier(.25,.8,.25,1);
+    position: relative; overflow: hidden;
+  }
+  .skill-card::before, .proj::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+    pointer-events: none; border-radius: 20px;
+  }
+  .skill-card:hover, .proj:hover {
+    border-color: var(--border-hover); transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(94, 234, 212, 0.05);
+    background: rgba(20, 25, 40, 0.8);
+  }
+
+  .skill-card h3 { font-size: 1.35rem; display: flex; align-items: center; gap: 14px; margin-bottom: 16px; font-weight: 700; }
+  .skill-card .icon {
+    width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+  }
+  .ic-ai { background: linear-gradient(135deg, rgba(94,234,212,.2), rgba(94,234,212,.05)); color: var(--accent); }
+  .ic-be { background: linear-gradient(135deg, rgba(129,140,248,.2), rgba(129,140,248,.05)); color: var(--accent2); }
+  .ic-fe { background: linear-gradient(135deg, rgba(240,171,252,.2), rgba(240,171,252,.05)); color: var(--accent3); }
+  .ic-ops { background: linear-gradient(135deg, rgba(251,191,36,.2), rgba(251,191,36,.05)); color: #fbbf24; }
+
+  .skill-card p.blurb { color: var(--text-dim); font-size: 1.05rem; margin-bottom: 24px; line-height: 1.6; }
+
+  .aud ul { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; flex-grow: 1; }
+  .aud li { color: var(--text-dim); font-size: .95rem; padding-left: 24px; position: relative; }
+  .aud li::before { content: "→"; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
+  .aud li b { color: var(--text); font-weight: 600; }
+
+  /* Chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+  .chip {
+    font-family: var(--mono); font-size: .75rem; color: var(--text-dim);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 12px;
+    background: rgba(0,0,0,.3); backdrop-filter: blur(4px);
+  }
+  .chips-container { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chip-label { font-family: var(--mono); font-size: 0.7rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-right: 4px; }
+
+  /* Projects */
+  .proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 28px; }
+  @media(max-width: 768px) { .proj-grid { grid-template-columns: 1fr; } }
+
+  .proj { padding: 40px; }
+  .proj.featured {
+    grid-column: 1 / -1;
+    background: linear-gradient(145deg, rgba(20, 25, 40, 0.8), rgba(10, 15, 25, 0.6));
+    border: 1px solid rgba(94, 234, 212, 0.3);
+  }
+  .proj-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+  .proj h3 { font-size: 1.5rem; font-weight: 800; line-height: 1.3; flex: 1; min-width: 0; }
+  .badge {
+    font-family: var(--mono); font-size: .7rem; padding: 6px 12px; border-radius: 99px;
+    white-space: nowrap; flex-shrink: 0; font-weight: 700; letter-spacing: 0.05em; margin-top: 4px;
+  }
+  .badge.live { color: #4ade80; border: 1px solid rgba(74,222,128,.4); background: rgba(74,222,128,.1); box-shadow: 0 0 10px rgba(74,222,128,.2); }
+  .badge.year { color: var(--accent); border: 1px solid rgba(94,234,212,.4); background: rgba(94,234,212,.1); }
+
+  .proj .impact {
+    margin: 20px 0; padding: 16px 20px;
+    background: linear-gradient(90deg, rgba(94,234,212,.08), transparent);
+    border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+    font-size: 1rem; color: #fff; font-weight: 500;
+  }
+  .proj p.desc { color: var(--text-dim); font-size: 1.05rem; }
+  .proj-links { margin-top: 20px; display: flex; gap: 24px; }
+  .proj-links a { font-size: .95rem; font-weight: 600; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: gap 0.2s; }
+  .proj-links a:hover { gap: 12px; }
+
+  /* Testimonials - Auto-scrolling carousel */
+  .testimonials-track-wrapper {
+    overflow: hidden; position: relative;
+    mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  }
+  .testimonials-track {
+    display: flex; gap: 28px; width: max-content;
+    animation: scroll-testimonials 20s linear infinite;
+  }
+  .testimonials-track:hover { animation-play-state: paused; }
+  @keyframes scroll-testimonials {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .testimonial {
+    display: flex; flex-direction: column;
+    background: var(--card-bg);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border); border-radius: 20px;
+    padding: 40px; position: relative; overflow: hidden;
+    width: 560px; min-width: 560px; flex-shrink: 0;
+    transition: border-color .4s;
+  }
+  @media(max-width: 768px) { .testimonial { width: 340px; min-width: 340px; padding: 28px; } }
+  .testimonial::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+    pointer-events: none; border-radius: 20px;
+  }
+  .testimonial:hover { border-color: var(--border-hover); }
+  .testimonial .quote-mark {
+    font-size: 3.5rem; line-height: 1; color: var(--accent); opacity: 0.3;
+    font-family: Georgia, serif; margin-bottom: 16px;
+  }
+  .testimonial blockquote {
+    color: var(--text-dim); font-size: 1.05rem; line-height: 1.7;
+    font-style: italic; flex: 1; margin-bottom: 28px;
+  }
+  .testimonial blockquote strong { color: var(--text); font-weight: 600; font-style: normal; }
+  .testimonial-author {
+    display: flex; align-items: center; gap: 16px;
+    border-top: 1px solid var(--border); padding-top: 24px;
+  }
+  .testimonial-author img {
+    width: 56px; height: 56px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--border);
+  }
+  .testimonial-author .author-info { display: flex; flex-direction: column; }
+  .testimonial-author .author-name { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .testimonial-author .author-role { font-size: .85rem; color: var(--text-faint); font-weight: 500; }
+
+  /* Experience Timeline */
+  .timeline { position: relative; padding-left: 40px; max-width: 900px; margin: 0 auto; }
+  .timeline::before { content: ""; position: absolute; left: 10px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--border) 20%, var(--border) 80%, transparent); }
+  .t-item { position: relative; padding-bottom: 60px; }
+  .t-item:last-child { padding-bottom: 0; }
+  .t-item::before {
+    content: ""; position: absolute; left: -36px; top: 6px; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--bg); border: 4px solid var(--accent); box-shadow: 0 0 15px rgba(94,234,212,.4);
+  }
+  .t-item .when { font-family: var(--mono); font-size: .85rem; color: var(--accent); margin-bottom: 10px; font-weight: 600; letter-spacing: 0.05em; }
+  .t-item h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
+  .t-item .org { color: var(--text-dim); font-size: 1.05rem; margin-bottom: 20px; font-weight: 500; }
+  .t-item ul { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .t-item li { color: var(--text-dim); font-size: 1rem; padding-left: 28px; position: relative; line-height: 1.6; }
+  .t-item li::before { content: "→"; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
+  .t-item li b { color: var(--text); font-weight: 600; }
+
+  /* Book */
+  .book {
+    display: grid; grid-template-columns: 260px 1fr; gap: 50px; align-items: center;
+    background: linear-gradient(135deg, rgba(20, 25, 40, 0.7), rgba(15, 12, 35, 0.8));
+    border: 1px solid rgba(129, 140, 248, 0.3); border-radius: 20px; padding: 50px;
+    position: relative; overflow: hidden;
+  }
+  .book::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+    pointer-events: none; border-radius: 20px;
+  }
+  @media(max-width:768px) { .book { grid-template-columns: 1fr; padding: 40px; text-align: center; } .book-cover { margin: 0 auto; } }
+  .book-cover {
+    aspect-ratio: 2/3; border-radius: 12px; width: 100%; max-width: 260px;
+    background: linear-gradient(160deg, #134e4a, #1e1b4b 60%, #05070a);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 28px 24px; box-shadow: 0 30px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,0.2);
+    transform: perspective(1000px) rotateY(-5deg); transition: transform 0.5s;
+  }
+  .book:hover .book-cover { transform: perspective(1000px) rotateY(0deg) translateY(-10px); }
+  .book-cover .bc-top { font-family: var(--mono); font-size: .65rem; color: var(--accent); letter-spacing: .15em; font-weight: 700; }
+  .book-cover .bc-title { font-weight: 900; font-size: 1.8rem; line-height: 1.15; color: white; margin-top: 20px; }
+  .book-cover .bc-author { font-size: .8rem; color: rgba(255,255,255,.7); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+  .book h3 { font-size: 2rem; font-weight: 900; margin-bottom: 10px; }
+  .book .meta { font-family: var(--mono); font-size: .95rem; color: var(--accent2); margin-bottom: 24px; font-weight: 600; }
+  .book p { color: var(--text-dim); font-size: 1.1rem; line-height: 1.7; margin-bottom: 30px; }
+
+  /* Contact */
+  #contact {
+    text-align: center; padding: 140px 0;
+    background: linear-gradient(to bottom, transparent, rgba(94, 234, 212, 0.03));
+    border-radius: 30px; margin-bottom: 60px; border: 1px solid rgba(255,255,255,0.02);
+    position: relative; overflow: hidden;
+  }
+  #contact::before {
+    content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 60%; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+  #contact h2 { font-size: 3rem; font-weight: 900; margin-bottom: 20px; }
+  #contact p { color: var(--text-dim); max-width: 650px; margin: 0 auto 48px; font-size: 1.2rem; }
+
+  footer { padding: 40px 0; text-align: center; }
+  footer p { font-family: var(--mono); font-size: .9rem; color: var(--text-faint); }
+  footer a { color: var(--text-dim); text-decoration: none; transition: color .2s; font-weight: 500; }
+  footer a:hover { color: var(--text); }
+
+  /* Reveal on Scroll */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(.25,.8,.25,1), transform 0.8s cubic-bezier(.25,.8,.25,1); }
+  .reveal.on { opacity: 1; transform: none; }
+  @media(prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
   }
 </style>
 </head>
 <body>
-<div class="glow a"></div><div class="glow b"></div>
+<div class="glow a"></div><div class="glow b"></div><div class="glow c"></div>
 
 <nav>
   <div class="nav-inner">
     <a class="logo" href="#">satyam<span>.</span>shivhare<span>()</span></a>
     <div class="nav-links">
-      <a href="#skills">Skills</a>
-      <a href="#projects">Projects</a>
+      <a href="#expertise">Expertise</a>
+      <a href="#projects">Work</a>
+      <a href="#testimonials">Testimonials</a>
       <a href="#experience">Experience</a>
       <a href="#book">Book</a>
-      <a class="nav-cta" href="#contact">Get in touch</a>
+      <a class="nav-cta" href="#contact">Let's Talk</a>
     </div>
   </div>
 </nav>
 
-<header class="wrap">
-  <span class="kicker">// Pune, India</span>
-  <h1>Satyam Shivhare</h1>
-  <div class="hero-role">Engineer — AI Systems · Backend Platforms · Frontend Experiences</div>
+<header class="wrap reveal on">
+  <span class="kicker">AI Engineer & Author</span>
+  <h1>I build <span class="hl">AI & Full-Stack</span> systems that scale.</h1>
   <p class="hero-sub">
-    I ship across the whole stack. <strong>AI:</strong> at Siemens I built one of the first agentic AI features in
-    the product line — an assistant driving <strong>50,000+ datapoint</strong> configurations through MCP and gRPC.
-    <strong>Backend:</strong> NestJS and FastAPI platforms with multi-tenant auth, real-time chat, queues, and
-    payment flows across three gateways. <strong>Frontend:</strong> React 19 SPAs and streaming chat interfaces
-    polished down to the word-by-word fade-in. All of it tested — <strong>1,550+ automated tests</strong> — and
-    all of it live in production.
+    Most AI products are fragile demos. I help founders and enterprises build <strong>production-ready AI and full-stack systems</strong> that scale. From agentic workflows at Siemens driving 50k+ configurations, to complete SaaS platforms built from scratch. I ship robust software with zero technical debt.
   </p>
   <div class="hero-actions">
-    <a class="btn btn-primary" href="#projects">See my work ↓</a>
-    <a class="btn btn-ghost" href="mailto:mkssshivhare@gmail.com">Email me</a>
+    <a class="btn btn-primary" href="#contact">Hire Me</a>
+    <a class="btn btn-ghost" href="#projects">View Case Studies</a>
   </div>
   <div class="hero-stats">
-    <div class="stat"><div class="n"><em>3+</em> yrs</div><div class="l">GenAI / LLM engineering</div></div>
-    <div class="stat"><div class="n"><em>50k+</em></div><div class="l">datapoints driven by agentic AI</div></div>
-    <div class="stat"><div class="n"><em>1,550+</em></div><div class="l">automated tests written</div></div>
-    <div class="stat"><div class="n"><em>4</em></div><div class="l">products designed, built &amp; shipped solo</div></div>
+    <div class="stat"><div class="n"><em>3+</em> YRS</div><div class="l">GenAI in Prod</div></div>
+    <div class="stat"><div class="n"><em>1.5k+</em></div><div class="l">Automated Tests</div></div>
+    <div class="stat"><div class="n"><em>50k+</em></div><div class="l">AI Datapoints</div></div>
+    <div class="stat"><div class="n"><em>6+</em></div><div class="l">Products Shipped</div></div>
   </div>
 </header>
 
-<section id="fit" class="wrap">
-  <div class="sec-head reveal"><span class="idx">01</span><h2>Whatever You're Hiring For</h2><div class="rule"></div></div>
+<!-- 01 Technical Expertise -->
+<section id="expertise" class="wrap">
+  <div class="sec-head reveal"><span class="idx">01</span><h2>Technical Expertise</h2><div class="rule"></div></div>
   <div class="skills-grid">
     <div class="skill-card aud reveal">
-      <h3><span class="icon ic-ai">◆</span>Hiring for AI?</h3>
-      <p class="blurb">Production LLM systems — not demos.</p>
+      <h3><span class="icon ic-ai">◆</span> AI / LLM Engineering</h3>
+      <p class="blurb">Architecting production AI that automates complex workflows, slashes costs, and drives real revenue.</p>
       <ul>
-        <li>Shipped one of <b>Siemens' first agentic AI features</b>: MCP client + typed LLM tools over gRPC, driving 50,000+ datapoint configurations.</li>
-        <li>Built a <b>full RAG stack solo</b>: pgvector retrieval, re-ranking, query condensing, SSE streaming, hallucination control, cost bounding.</li>
-        <li>Wrote <b>AI for Founders</b> (Amazon, 2026) — 13 chapters on RAG vs fine-tuning, evals, and inference economics.</li>
+        <li><b>Agentic Workflows:</b> Built an MCP/gRPC assistant replacing weeks of manual enterprise work.</li>
+        <li><b>Production RAG:</b> pgvector retrieval, re-ranking, and SSE streaming.</li>
       </ul>
-    </div>
-    <div class="skill-card aud reveal">
-      <h3><span class="icon ic-be">▣</span>Hiring for Backend?</h3>
-      <p class="blurb">APIs, data, queues and money — at production grade.</p>
-      <ul>
-        <li>Built complete platforms in <b>NestJS and FastAPI</b>: multi-tenant RBAC, JWT with refresh rotation, Socket.io real-time chat, BullMQ workers.</li>
-        <li>Payment engineering across <b>Stripe, Razorpay and Paystack</b> — subscriptions, credits, and split-settlement flows with gross-up math.</li>
-        <li><b>1,550+ automated tests</b> across NUnit, Jest and Playwright — TDD is the default, not the exception.</li>
-      </ul>
-    </div>
-    <div class="skill-card aud reveal">
-      <h3><span class="icon ic-fe">◈</span>Hiring for Frontend?</h3>
-      <p class="blurb">Interfaces that make complex systems feel simple.</p>
-      <ul>
-        <li><b>React 19 + TypeScript SPAs</b> in production: tenant dashboard, admin console, and Next.js apps with Tailwind, Zustand, TanStack Query.</li>
-        <li>Built a <b>Gemini-style streaming chat UI</b>: paced token streaming, word-by-word fade-in, smart auto-scroll, citation chips, light/dark, reduced-motion support.</li>
-        <li>Every UI ships with <b>Playwright e2e coverage</b> and obsessive polish on loading, error and empty states.</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<section id="skills" class="wrap">
-  <div class="sec-head reveal"><span class="idx">02</span><h2>Skills</h2><div class="rule"></div></div>
-  <div class="skills-grid grid-2">
-    <div class="skill-card reveal">
-      <h3><span class="icon ic-ai">◆</span>AI / LLM Engineering</h3>
-      <p class="blurb">The core of what I do — production GenAI in typed Python.</p>
       <div class="chips">
         <span class="chip">RAG pipelines</span><span class="chip">Agentic AI</span>
-        <span class="chip">MCP servers &amp; clients</span><span class="chip">LLM function calling</span>
+        <span class="chip">MCP servers & clients</span><span class="chip">LLM function calling</span>
         <span class="chip">pgvector + semantic search</span><span class="chip">Embedding pipelines</span>
         <span class="chip">Re-ranking</span><span class="chip">Prompt engineering</span>
         <span class="chip">Hallucination control</span><span class="chip">Structured outputs</span>
-        <span class="chip">Token streaming (SSE)</span><span class="chip">Context-window management</span>
-        <span class="chip">Gemini API</span><span class="chip">Claude API</span><span class="chip">LangChain splitters</span>
-        <span class="chip">Evals &amp; golden-question testing</span><span class="chip">Inference cost control</span>
+        <span class="chip">Token streaming (SSE)</span><span class="chip">Gemini API</span>
+        <span class="chip">Claude API</span><span class="chip">LangChain splitters</span>
       </div>
     </div>
-    <div class="skill-card reveal">
-      <h3><span class="icon ic-be">▣</span>Backend Engineering</h3>
-      <p class="blurb">APIs, data, queues and money — tested and shipped.</p>
+
+    <div class="skill-card aud reveal">
+      <h3><span class="icon ic-be">▣</span> Backend Engineering</h3>
+      <p class="blurb">Bulletproof APIs, secure data architecture, and flawless payment flows engineered for high-concurrency.</p>
+      <ul>
+        <li><b>End-to-End Platforms:</b> NestJS & FastAPI architectures with multi-tenant RBAC and real-time websockets.</li>
+        <li><b>Fintech Integration:</b> Split-settlement and gross-up math across Stripe & Paystack.</li>
+      </ul>
       <div class="chips">
         <span class="chip">Python · FastAPI</span><span class="chip">Node.js · NestJS</span>
         <span class="chip">C# / .NET Core</span><span class="chip">gRPC</span><span class="chip">Pydantic v2</span>
         <span class="chip">asyncio · psycopg3</span><span class="chip">PostgreSQL</span><span class="chip">Prisma</span>
         <span class="chip">Redis · BullMQ</span><span class="chip">WebSockets · Socket.io</span>
         <span class="chip">JWT auth · RBAC</span><span class="chip">Stripe · Razorpay · Paystack</span>
-        <span class="chip">TDD — Jest · NUnit</span>
+        <span class="chip">TDD - Jest · NUnit</span>
       </div>
     </div>
-    <div class="skill-card reveal">
-      <h3><span class="icon ic-fe">◈</span>Frontend Engineering</h3>
-      <p class="blurb">Fast, polished SPAs that make the AI feel effortless.</p>
+
+    <div class="skill-card aud reveal">
+      <h3><span class="icon ic-fe">◈</span> Frontend Engineering</h3>
+      <p class="blurb">Blazing-fast, pixel-perfect frontends that make complex enterprise tools feel effortless to use.</p>
+      <ul>
+        <li><b>Modern SPAs:</b> React 19, Next.js, Tailwind, and Zustand for snappy user experiences.</li>
+        <li><b>Streaming AI UX:</b> Built word-by-word token streaming, citation chips, and smart auto-scroll.</li>
+      </ul>
       <div class="chips">
         <span class="chip">React 19</span><span class="chip">TypeScript</span>
         <span class="chip">Next.js</span><span class="chip">Vite</span><span class="chip">Tailwind CSS</span>
@@ -326,9 +427,14 @@
         <span class="chip">Streaming chat UX</span><span class="chip">Playwright e2e</span>
       </div>
     </div>
-    <div class="skill-card reveal">
-      <h3><span class="icon ic-ops">⬡</span>Cloud &amp; DevOps</h3>
-      <p class="blurb">Event-driven, serverless and containerized — deployed on six clouds.</p>
+
+    <div class="skill-card aud reveal">
+      <h3><span class="icon ic-ops">⬡</span> Cloud & LLMOps</h3>
+      <p class="blurb">Event-driven, globally distributed infrastructure with strict AI inference cost controls.</p>
+      <ul>
+        <li><b>Cost Bounding:</b> Rate limiting, caching, and token-spend halving.</li>
+        <li><b>Evals & Observability:</b> Author of <i>ragjudge</i> (PyPI/npm) for rigorous LLM testing.</li>
+      </ul>
       <div class="chips">
         <span class="chip">AWS Lambda</span><span class="chip">EventBridge</span><span class="chip">S3</span>
         <span class="chip">DynamoDB</span><span class="chip">AWS Transcribe</span>
@@ -340,122 +446,219 @@
   </div>
 </section>
 
+<!-- 02 Projects -->
 <section id="projects" class="wrap">
-  <div class="sec-head reveal"><span class="idx">03</span><h2>Things I've Built &amp; Shipped</h2><div class="rule"></div></div>
+  <div class="sec-head reveal"><span class="idx">02</span><h2>Things I've Built & Shipped</h2><div class="rule"></div></div>
   <div class="proj-grid">
 
     <div class="proj featured reveal">
       <div class="proj-top">
-        <h3>Agentic AI for Building Engineering — Siemens</h3>
+        <h3>ragjudge - Open-source RAG Evaluation Library</h3>
+        <span class="badge live">PYPI & NPM PUBLISHED</span>
+      </div>
+      <p class="desc">
+        Designed and shipped a typed, async LLM-as-judge evaluation library in Python and TypeScript. Features strict claim-decomposition faithfulness and bring-your-own-judge architecture.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Caught a subtle top_k retrieval bug in production, preserving 100% answer pass rates while halving the Gemini API input-token bill.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Open Source</span><span class="chip">LLMOps / Evals</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">Python</span><span class="chip">TypeScript</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="proj featured reveal">
+      <div class="proj-top">
+        <h3>Agentic AI for Building Engineering - Siemens</h3>
         <span class="badge live">SHIPPED IN PRODUCT</span>
       </div>
-      <div class="tag-line">Python MCP client · gRPC automation server · C# engineering APIs</div>
       <p class="desc">
-        One of the first agentic AI features in the Siemens product line. An engineer types
-        <b>"create 10,000 analog-input datapoints, assign them to modules, connect the controller"</b> — and the
-        assistant executes the whole workflow, replacing weeks of manual clicks. I built both halves:
-        a from-scratch <b>gRPC automation server</b> over the C# engineering APIs (10,000+ objects in under an hour,
-        ~40% migration effort cut, 100+ legacy projects migrated) and the <b>Python MCP client</b> that exposes those
-        APIs as typed LLM tools with validation and safety constraints for 50,000+ datapoint configurations —
-        backed by a 650+ test NUnit suite I lead.
+        Engineers were spending weeks manually configuring controllers. I built a natural-language assistant that executes complex workflows via typed LLM tools.
       </p>
-      <div class="chips">
-        <span class="chip hot">Agentic AI</span><span class="chip hot">MCP</span><span class="chip">LLM tool use</span>
-        <span class="chip">Python</span><span class="chip">gRPC</span><span class="chip">C#/.NET</span><span class="chip">NUnit</span>
+      <div class="impact">
+        <b>Impact:</b> Reduced project migration effort by ~40%, automating the creation of over 10,000 building objects per hour.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Agentic AI</span><span class="chip">Enterprise Systems</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">MCP</span><span class="chip">Python</span><span class="chip">gRPC</span><span class="chip">C#/.NET</span><span class="chip">NUnit</span>
+        </div>
       </div>
     </div>
 
     <div class="proj reveal">
       <div class="proj-top">
-        <h3>AIForFounders — RAG Q&amp;A over a full book</h3>
+        <h3>AIForFounders SaaS Platform</h3>
         <span class="badge live">LIVE</span>
       </div>
-      <div class="tag-line">Python · FastAPI · pgvector · Gemini</div>
       <p class="desc">
-        Full production RAG stack: 347 overlap-tuned chunks, 1,536-dim Gemini embeddings in Postgres + pgvector,
-        cosine retrieval with <b>domain-aware re-ranking</b>, and a condensing step that rewrites follow-ups into
-        standalone queries. The React chat UI streams token-by-token over SSE with <b>paced rendering and
-        word-by-word fade-in</b>, chapter citations, and smart auto-scroll — while the backend refuses
-        out-of-corpus answers and hard-bounds daily inference spend. Deployed on Fly.io.
+        A full production RAG stack built solo. Features domain-aware re-ranking, token streaming, and hallucination control.
       </p>
-      <div class="chips">
-        <span class="chip hot">RAG</span><span class="chip">FastAPI</span><span class="chip">pgvector</span>
-        <span class="chip">SSE streaming</span><span class="chip">Pydantic v2</span><span class="chip">Neon</span>
+      <div class="impact">
+        <b>Impact:</b> Delivers instant, cited answers from my book with hard-bounded daily inference costs.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">RAG Pipeline</span><span class="chip">SaaS</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">FastAPI</span><span class="chip">pgvector</span><span class="chip">SSE</span><span class="chip">Pydantic v2</span><span class="chip">Neon</span>
+        </div>
       </div>
       <div class="proj-links"><a href="https://aiforfounders.in" target="_blank" rel="noopener">aiforfounders.in →</a></div>
     </div>
 
     <div class="proj reveal">
       <div class="proj-top">
-        <h3>Stemy — B2B supply-chain SaaS</h3>
-        <span class="badge live">LIVE</span>
+        <h3>Stemy - B2B Supply Chain SaaS</h3>
+        <span class="badge year">2026</span>
       </div>
-      <div class="tag-line">NestJS 11 · React 19 · Prisma · BullMQ · Stripe</div>
       <p class="desc">
-        Designed and built the entire platform solo — REST API + Socket.io real-time chat between buyers and
-        suppliers, multi-tenant RBAC with company hierarchies, JWT auth with refresh-token rotation, Stripe
-        subscription billing, and a BullMQ/Redis background worker. <b>419 unit + 464 integration + 24 Playwright
-        e2e tests</b> in GitLab CI, deployed to DigitalOcean.
+        Designed and built a complete B2B marketplace platform with real-time chat, company hierarchies, and subscription billing.
       </p>
-      <div class="chips">
-        <span class="chip hot">NestJS</span><span class="chip">React 19</span><span class="chip">Socket.io</span>
-        <span class="chip">Multi-tenant</span><span class="chip">Stripe</span>
+      <div class="impact">
+        <b>Impact:</b> Shipped a fully tested platform (900+ tests) solo, enabling secure buyer-supplier transactions.
       </div>
-      <div class="proj-links"><a href="https://stemy.io" target="_blank" rel="noopener">stemy.io →</a></div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">B2B SaaS</span><span class="chip">Multi-tenant</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">NestJS</span><span class="chip">React 19</span><span class="chip">Socket.io</span><span class="chip">Stripe</span>
+        </div>
+      </div>
     </div>
 
     <div class="proj reveal">
       <div class="proj-top">
-        <h3>EduLedgerNG — fintech for Nigerian schools</h3>
+        <h3>EduLedgerNG - Fintech for Schools</h3>
         <span class="badge live">10+ SCHOOLS LIVE</span>
       </div>
-      <div class="tag-line">Supabase · Postgres 17 · React 18 · Paystack</div>
       <p class="desc">
-        Sole engineer for all core development: <b>Paystack split-settlement payments</b> (per-school subaccounts
-        with lazy provisioning, 1% platform fee, gross-up math), a two-stage fee-approval workflow with
-        database-enforced immutable fees, and RLS security hardening — 12 auth bugs fixed after an audit, with
-        unit, integration and e2e tests on the money logic.
+        Sole engineer for a Nigerian fintech platform handling complex split-settlement payments and immutable fee approvals.
       </p>
-      <div class="chips">
-        <span class="chip hot">Fintech</span><span class="chip">Supabase RLS</span><span class="chip">Deno edge functions</span>
-        <span class="chip">React 18</span><span class="chip">TypeScript</span>
+      <div class="impact">
+        <b>Impact:</b> Secured financial data for schools with hardened RLS security and automated payment flows.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Fintech</span><span class="chip">EdTech</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">Supabase RLS</span><span class="chip">Deno</span><span class="chip">React 18</span><span class="chip">TypeScript</span>
+        </div>
       </div>
       <div class="proj-links"><a href="https://eduledgerng.com" target="_blank" rel="noopener">eduledgerng.com →</a></div>
     </div>
 
     <div class="proj reveal">
       <div class="proj-top">
-        <h3>Bholuma — AI transcription &amp; subtitles</h3>
+        <h3>Bholuma - AI Transcription & Subtitles</h3>
         <span class="badge live">LIVE</span>
       </div>
-      <div class="tag-line">AWS serverless · Next.js · Transcribe</div>
       <p class="desc">
-        Fully serverless speech-to-text SaaS: Lambda + EventBridge + DynamoDB job tracking, pre-signed S3 uploads
-        and AWS Transcribe with multi-language support including Hindi — <b>a 5-minute video becomes an SRT in
-        under 60 seconds</b>. Credit-based billing with Stripe and Razorpay.
+        Fully serverless speech-to-text SaaS: Lambda + EventBridge + DynamoDB job tracking, pre-signed S3 uploads and AWS Transcribe with multi-language support.
       </p>
-      <div class="chips">
-        <span class="chip hot">Serverless</span><span class="chip">Lambda</span><span class="chip">EventBridge</span>
-        <span class="chip">Next.js</span><span class="chip">DynamoDB</span>
+      <div class="impact">
+        <b>Impact:</b> Transcribes a 5-minute video to SRT in under 60 seconds with fully automated credit-based billing.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Serverless</span><span class="chip">Event-driven</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">AWS Lambda</span><span class="chip">EventBridge</span><span class="chip">Next.js</span><span class="chip">DynamoDB</span>
+        </div>
       </div>
       <div class="proj-links"><a href="https://bholuma.in" target="_blank" rel="noopener">bholuma.in →</a></div>
     </div>
 
     <div class="proj reveal">
       <div class="proj-top">
-        <h3>Zerodha MCP Server + Listic</h3>
+        <h3>Marketpal.com</h3>
+        <span class="badge live">LIVE</span>
+      </div>
+      <p class="desc">
+        B2B Supplier Marketplace where I served as the Software Architect. Designed the core buyer-supplier matching algorithm (handling location, response times, and dominance penalties) and the lead-distribution state machine.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Architected the core IP and successfully guided the development team through delivery to production.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Architecture</span><span class="chip">Algorithms</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">TypeScript</span><span class="chip">State Machines</span><span class="chip">DigitalOcean</span>
+        </div>
+      </div>
+      <div class="proj-links"><a href="https://marketpal.com" target="_blank" rel="noopener">marketpal.com →</a></div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-top">
+        <h3>Zerodha MCP Server</h3>
         <span class="badge year">2026</span>
       </div>
-      <div class="tag-line">Model Context Protocol · Gemini Vision · Azure</div>
       <p class="desc">
-        <b>Zerodha MCP Server</b> — trading operations exposed as typed, Claude-compatible tools for LLM agents;
-        the server side of the MCP work I ship at Siemens. <b>Listic</b> — an event-driven AI product-photography
-        pipeline on Azure using Gemini Vision for background removal, lighting correction and scene generation,
-        cutting SME photography costs ~90%.
+        Trading operations exposed as typed, Claude-compatible tools for LLM agents. A working implementation of the protocol behind today's AI agents.
       </p>
-      <div class="chips">
-        <span class="chip hot">MCP</span><span class="chip">LLM agents</span><span class="chip">Gemini Vision</span>
-        <span class="chip">Azure</span><span class="chip">Event-driven</span>
+      <div class="impact">
+        <b>Impact:</b> Mirrors the server-side architecture of the MCP client work shipped at Siemens.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">LLM Agents</span><span class="chip">Protocol Design</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">MCP</span><span class="chip">Claude</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="proj reveal">
+      <div class="proj-top">
+        <h3>Listic.in</h3>
+        <span class="badge year">2026</span>
+      </div>
+      <p class="desc">
+        An event-driven AI product-photography pipeline on Azure using Gemini Vision for background removal, lighting correction, and scene generation.
+      </p>
+      <div class="impact">
+        <b>Impact:</b> Cuts SME product photography costs by ~90%.
+      </div>
+      <div class="chips-container">
+        <div class="chip-row">
+          <span class="chip-label">Focus:</span>
+          <span class="chip">Event-driven</span><span class="chip">Image Pipeline</span>
+        </div>
+        <div class="chip-row">
+          <span class="chip-label">Stack:</span>
+          <span class="chip">Gemini Vision</span><span class="chip">Azure</span>
+        </div>
       </div>
       <div class="proj-links"><a href="https://listic.in" target="_blank" rel="noopener">listic.in →</a></div>
     </div>
@@ -463,44 +666,119 @@
   </div>
 </section>
 
+<!-- 03 Testimonials -->
+<section id="testimonials" class="wrap">
+  <div class="sec-head reveal"><span class="idx">03</span><h2>What People Say</h2><div class="rule"></div></div>
+  <div class="testimonials-track-wrapper">
+    <div class="testimonials-track">
+      <!-- Card 1 -->
+      <div class="testimonial">
+        <div class="quote-mark">"</div>
+        <blockquote>
+          Satyam designed the <strong>core matching algorithm and lead-distribution architecture</strong> that powers Marketpal. His ability to take a complex business problem and translate it into clean, scalable code is exceptional. He didn't just write code, he shaped the technical vision of our product.
+        </blockquote>
+        <div class="testimonial-author">
+          <img src="adam-mikael.png" alt="Adam Mikael">
+          <div class="author-info">
+            <span class="author-name">Adam Mikael</span>
+            <span class="author-role">CEO, Marketpal.com</span>
+          </div>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="testimonial">
+        <div class="quote-mark">"</div>
+        <blockquote>
+          Satyam single-handedly built the <strong>entire payments infrastructure</strong> for EduLedgerNG. From Paystack split-settlement to RLS security hardening, he delivered a system that 10+ schools now trust with real money. His speed and attention to the financial edge cases was remarkable.
+        </blockquote>
+        <div class="testimonial-author">
+          <img src="john-awoleke.jpg" alt="John Awoleke">
+          <div class="author-info">
+            <span class="author-name">John Awoleke</span>
+            <span class="author-role">CEO, EduLedgerNG</span>
+          </div>
+        </div>
+      </div>
+      <!-- Duplicate Card 1 for seamless loop -->
+      <div class="testimonial">
+        <div class="quote-mark">"</div>
+        <blockquote>
+          Satyam designed the <strong>core matching algorithm and lead-distribution architecture</strong> that powers Marketpal. His ability to take a complex business problem and translate it into clean, scalable code is exceptional. He didn't just write code, he shaped the technical vision of our product.
+        </blockquote>
+        <div class="testimonial-author">
+          <img src="adam-mikael.png" alt="Adam Mikael">
+          <div class="author-info">
+            <span class="author-name">Adam Mikael</span>
+            <span class="author-role">CEO, Marketpal.com</span>
+          </div>
+        </div>
+      </div>
+      <!-- Duplicate Card 2 for seamless loop -->
+      <div class="testimonial">
+        <div class="quote-mark">"</div>
+        <blockquote>
+          Satyam single-handedly built the <strong>entire payments infrastructure</strong> for EduLedgerNG. From Paystack split-settlement to RLS security hardening, he delivered a system that 10+ schools now trust with real money. His speed and attention to the financial edge cases was remarkable.
+        </blockquote>
+        <div class="testimonial-author">
+          <img src="john-awoleke.jpg" alt="John Awoleke">
+          <div class="author-info">
+            <span class="author-name">John Awoleke</span>
+            <span class="author-role">CEO, EduLedgerNG</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 Experience -->
 <section id="experience" class="wrap">
-  <div class="sec-head reveal"><span class="idx">04</span><h2>Experience</h2><div class="rule"></div></div>
+  <div class="sec-head reveal"><span class="idx">04</span><h2>Professional Experience</h2><div class="rule"></div></div>
   <div class="timeline">
     <div class="t-item reveal">
-      <div class="when">2023 — PRESENT</div>
+      <div class="when">2023 - PRESENT</div>
       <h3>Software Development Engineer</h3>
       <div class="org">Siemens Technology Services · Pune</div>
       <ul>
-        <li>Built the <b>agentic chat assistant inside ABTSite</b> (standalone and inside Desigo CC) — natural-language configuration of controllers, datapoints and device hierarchies for large infrastructure owners.</li>
-        <li>Engineered a from-scratch <b>gRPC automation server</b> over the C# engineering APIs: 10,000+ building objects created in under 60 minutes, ~40% migration effort cut, 100+ legacy customer projects migrated automatically.</li>
-        <li>Built the <b>Python MCP client</b> turning those APIs into typed LLM tools — tool contracts, validation and safety constraints for 50,000+ datapoint configurations.</li>
-        <li>Lead developer of a <b>650+ test NUnit suite</b>; configuration-parsing automation saving ~1,200 developer hours/year; mentor new developers to full speed in 3 months (typical: 6).</li>
+        <li><b>Agentic AI:</b> Built the agentic chat assistant driving 50,000+ datapoint configurations across infrastructure.</li>
+        <li><b>Backend & Architecture:</b> Engineered a gRPC automation server saving ~1,200 developer hours/year, cutting legacy migration effort by ~40%.</li>
+        <li><b>Leadership & Quality:</b> Lead developer of a 650+ test NUnit suite; mentor new developers to full speed in 3 months (typical is 6).</li>
       </ul>
     </div>
     <div class="t-item reveal">
-      <div class="when">2025 — PRESENT</div>
-      <h3>Founder &amp; Full-Stack Engineer</h3>
-      <div class="org">Stemy.io · B2B supply-chain SaaS</div>
+      <div class="when">2025 - PRESENT</div>
+      <h3>Founder & Full-Stack Engineer</h3>
+      <div class="org">Stemy.io</div>
       <ul>
-        <li>Everything from schema to CI — NestJS API, React 19 SPAs, real-time chat, billing, and a 900+ test suite, built and operated solo.</li>
+        <li>Everything from schema to CI - NestJS API, React 19 SPAs, real-time chat, billing, and a 900+ test suite, built and operated solo.</li>
       </ul>
     </div>
     <div class="t-item reveal">
-      <div class="when">2026 — PRESENT</div>
+      <div class="when">2026 - PRESENT</div>
       <h3>Technical Founder</h3>
-      <div class="org">EduLedgerNG · Nigerian fintech/EdTech</div>
+      <div class="org">EduLedgerNG</div>
       <ul>
-        <li>Sole engineer for a payments platform serving 10+ live schools — split-settlement money flows, immutable fee workflows, and hardened RLS security.</li>
+        <li>Sole engineer for a payments platform serving 10+ live schools - split-settlement money flows, immutable fee workflows, and hardened RLS security.</li>
       </ul>
     </div>
     <div class="t-item reveal">
-      <div class="when">2019 — 2023</div>
+      <div class="when">CONTRACT</div>
+      <h3>Software Architect</h3>
+      <div class="org">Marketpal.com - B2B Supplier Marketplace</div>
+      <ul>
+        <li><b>Architecture:</b> Designed the buyer-supplier matching algorithm (response time, location, dominance penalties) and a lead-distribution state machine.</li>
+        <li><b>Leadership:</b> Guided the development team through delivery in TypeScript on DigitalOcean.</li>
+      </ul>
+    </div>
+    <div class="t-item reveal">
+      <div class="when">2019 - 2023</div>
       <h3>B.Tech, Computer Science</h3>
       <div class="org">Rustamji Institute of Technology, Gwalior · GPA 8.8/10</div>
     </div>
   </div>
 </section>
 
+<!-- 05 Publication -->
 <section id="book" class="wrap">
   <div class="sec-head reveal"><span class="idx">05</span><h2>Publication</h2><div class="rule"></div></div>
   <div class="book reveal">
@@ -513,36 +791,32 @@
       <h3>AI for Founders</h3>
       <div class="meta">Amazon Kindle · 2026 · 13 chapters</div>
       <p>
-        A practical guide for founders building AI products: RAG vs fine-tuning vs prompting, model selection,
-        platform risk, evals and shipping reliable AI, token unit economics, and AI product moats — the same
-        decisions I make in production, written down.
+        A practical playbook for founders building AI products. It cuts through the hype to cover RAG vs. fine-tuning, model selection, platform risk, and token unit economics. These are the exact frameworks I use to ship reliable AI in production.
       </p>
-      <a class="btn btn-ghost" href="https://www.amazon.com/s?k=AI+for+Founders+Satyam+Shivhare" target="_blank" rel="noopener">Find it on Amazon →</a>
+      <a class="btn btn-primary" href="https://www.amazon.com/s?k=AI+for+Founders+Satyam+Shivhare" target="_blank" rel="noopener">Get the Book</a>
     </div>
   </div>
 </section>
 
-<section id="contact" class="wrap">
-  <span class="kicker">// what's next</span>
-  <h2>Let's build something together</h2>
+<!-- Contact -->
+<section id="contact" class="wrap reveal">
+  <h2>Stop building demos. Start shipping products.</h2>
   <p>
-    Whether it's LLM systems, backend platforms, or a product that needs to ship end-to-end —
-    if it's an interesting problem, I'm interested. My inbox is open.
+    Whether you need an agentic AI system, a high-performance backend, or a complete SaaS platform built from scratch, I can help you architect and ship it right the first time.
   </p>
-  <div class="contact-links">
-    <a class="btn btn-primary" href="mailto:mkssshivhare@gmail.com">mkssshivhare@gmail.com</a>
-  </div>
+  <a class="btn btn-primary" href="mailto:mkssshivhare@gmail.com" style="font-size: 1.15rem; padding: 18px 40px;">Let's discuss your project →</a>
 </section>
 
 <footer>
-  <p>designed &amp; built by <a href="mailto:mkssshivhare@gmail.com">Satyam Shivhare</a> — single HTML file, no framework needed ⚡</p>
+  <div class="wrap">
+    <p>Designed & built by <a href="mailto:mkssshivhare@gmail.com">Satyam Shivhare</a> - single HTML file, no framework needed ⚡</p>
+  </div>
 </footer>
 
 <script>
-  // reveal on scroll
   const io = new IntersectionObserver(es => {
     es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 </script>
 </body>
